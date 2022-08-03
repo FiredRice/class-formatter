@@ -1,0 +1,32 @@
+import { HIGH_PRORITY } from '../../config';
+import { NumberConfig } from '../../types';
+import { useModelKeys } from '../../utils';
+
+/**
+ * 转换为数字，默认 0
+ * @param value 配置项
+ */
+export function toNumber(value: NumberConfig | number = 0) {
+    return (target, propertyKey: string) => {
+        let defaultValue = 0;
+        let autoTrans = true;
+        let keys;
+        if (typeof value === 'number') {
+            defaultValue = value;
+        } else {
+            defaultValue = value.defaultValue || 0;
+            autoTrans = value.autoTrans || true;
+            keys = value.keys;
+        }
+        target[propertyKey] = target[propertyKey] || [];
+        target[propertyKey].push({
+            type: 'number',
+            value: {
+                defaultValue,
+                autoTrans
+            },
+            modalKeys: useModelKeys(keys),
+            priority: HIGH_PRORITY
+        });
+    };
+}

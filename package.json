@@ -1,0 +1,20 @@
+{
+	"name": "class-formatter",
+	"version": "1.0.0",
+	"description": "一套装饰器风格的数据格式化方法。",
+	"main": "lib/index.js",
+	"types": "lib/index.d.ts",
+	"scripts": {
+		"build": "tsc -b",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "东北炒饭",
+	"license": "ISC",
+	"dependencies": {
+		"lodash": "^4.17.21"
+	},
+	"devDependencies": {
+		"@types/lodash": "^4.14.182",
+		"typescript": "^4.7.4"
+	}
+}
