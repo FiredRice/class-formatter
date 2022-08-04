@@ -20,7 +20,7 @@
 	"keywords": ["装饰器", "ts", "js", "格式化", "类型转换", "注解"],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Fried-rice-in-Northeast-China/Formatter"
+		"url": "https://github.com/FiredRice/Formatter"
 	},
 	"files": [
 		"lib",
