@@ -1,4 +1,4 @@
-# Formatter 使用文档
+# class-formatter 使用文档
 
 ## 目录
 [一、简介](#简介)<br>
