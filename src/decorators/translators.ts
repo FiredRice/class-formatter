@@ -1,5 +1,5 @@
-import { isArray, isBoolean, isNaN, isNumber, isObject, isString } from 'lodash';
 import { executeTransform } from '../translator';
+import { isArray, isBoolean, isNaN, isNumber, isObject, isString } from '../utils';
 
 /**
  * 数字校验
@@ -13,7 +13,7 @@ export function transNumber(target, options: any): number {
     const { defaultValue, autoTrans } = options;
     if (!isNumber(target)) {
         if (autoTrans && isString(target)) {
-            const result = Number(target);
+            const result = parseFloat(target);
             return isNaN(result) ? defaultValue : result;
         } else {
             return isNumber(defaultValue) ? defaultValue : 0;

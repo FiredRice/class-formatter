@@ -70,7 +70,7 @@ export function Formatter(constructor: Function) {
                         case 'remove':
                             break;
                         case 'format':
-                            result[key] = value(result[key], { ...values }, { ...shareValue });
+                            result[key] = value(result[key] === undefined ? element : result[key], { ...values }, { ...shareValue });
                             break;
                         case 'custom':
                             result[key] = transCustom(values, shareValue, value.callback, value.args);
