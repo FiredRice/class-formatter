@@ -140,8 +140,8 @@ export function Formatter(constructor: Function) {
                     }
                 }
             } else {
-                // 不存在装饰器的属性默认为 undefined
-                result[key] = undefined;
+                // 不存在装饰器的属性取默认值
+                result[key] = this[key];
             }
         }
     };
