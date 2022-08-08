@@ -20,4 +20,5 @@ export default {
 		},
 	],
 	plugins: [commonjs(), nodeResolve()],
+	external: ['lodash']
 };

@@ -1,5 +1,5 @@
+import { isArray, isBoolean, isNumber, isObject, isString } from 'lodash';
 import { executeTransform } from '../translator';
-import { isArray, isBoolean, isNaN, isNumber, isObject, isString } from '../utils';
 
 /**
  * 数字校验
@@ -92,7 +92,7 @@ export function transArray(target, options, transOptions?: any): any {
  */
 export function transObject(target, options, transOptions?: any): any {
     const { defaultValue, ClassType } = options;
-    const isObj = isObject(target);
+    const isObj = isObject(target) && !isArray(target);
     if (ClassType) {
         return executeTransform(ClassType, isObj ? target : defaultValue || {}, transOptions) || defaultValue || {};
     }
