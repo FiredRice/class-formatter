@@ -135,7 +135,7 @@ export function Formatter(constructor: Function) {
                             delete result[key];
                             break;
                         default:
-                            result[key] = undefined;
+                            result[key] = this[key];
                             break;
                     }
                 }
