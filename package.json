@@ -1,6 +1,6 @@
 {
 	"name": "class-formatter",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "一套装饰器风格的数据格式化方法。",
 	"author": "东北炒饭",
 	"license": "MIT",
@@ -24,7 +24,7 @@
 		"@rollup/plugin-commonjs": "^22.0.1",
 		"@rollup/plugin-node-resolve": "^13.3.0",
 		"@types/lodash": "^4.14.182",
-		"@types/node": "^18.6.3",
+		"@types/node": "^18.6.4",
 		"@types/shelljs": "^0.8.11",
 		"rimraf": "3.0.2",
 		"rollup": "^2.77.2",
