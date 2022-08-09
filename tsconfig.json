@@ -14,6 +14,7 @@
 		"removeComments": false,
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
+		"useDefineForClassFields": true,
 		"emitDecoratorMetadata": true,
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitAny": false,

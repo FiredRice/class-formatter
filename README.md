@@ -12,7 +12,7 @@
 - [关于循环引用](#关于循环引用)<br>
 - [注意事项](#注意事项)<br>
   - [关于执行优先级](#note1)<br>
-  - [关于 ts 构建的注意事项](#note2)<br>
+  - [关于 useDefineForClassFields](#note2)<br>
 
 ## 简介
 一套装饰器风格的数据格式化方法。 
@@ -25,6 +25,15 @@
 
 
 `yarn add @types/lodash -D`
+
+在 `typescript` 项目中，您还需对 `tsconfig.json` 进行如下配置来体验完整功能。
+```ts
+{
+    "compilerOptions": {
+        "useDefineForClassFields": true
+    }
+}
+```
 
 ## 使用方法
 ```ts
@@ -238,7 +247,7 @@ class User {
 - class-formatter 只保证不同优先级装饰器的执行顺序，若同时存在相同优先级的装饰器，则 **同优先级之间的执行顺序无法保证** 。
 - 优先级 3 - 5 的装饰器可能会导致模板 **转换结果类型** 与 **模板类型** 不一致，使用时请格外注意。
 
-**<div id='note2'>关于 ts 构建的注意事项</div>**
-- 在 `typescript` 中，由于 `typescript` 打包的 js 代码会将未实例化的属性忽略，因此：
-  - 若被转换对象不存在该属性，且模板中该属性没有装饰器，则会忽略该属性。
-  - 若被转换对象不存在该属性，且模板中该属性没有装饰器，且转换结果中想要该属性，请在模板中为该属性赋上初始值。如：`name: string = ''` 。
+**<div id='note2'>关于 useDefineForClassFields</div>**
+- 若未开启 `useDefineForClassFields` ，则属性在源数据中不存在，在模板中存在，且模板中该属性没有装饰器时，该属性会被忽略。
+- 当开启 `useDefineForClassFields` 后，若属性在源数据中不存在，在模板中存在，且模板中该属性没有装饰器，则会将该属性合并到格式化结果，默认值为 `undefined` 。
+- 是否开启 `useDefineForClassFields` 请阅读 `typescript` 官方文档谨慎使用。
