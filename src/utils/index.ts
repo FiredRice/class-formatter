@@ -1,30 +1,19 @@
-import { isObject } from 'lodash';
-import { ModalKey } from '../types';
+import { ModalKey, Type } from '../types';
 
 export function useModelKeys(modalKeys: ModalKey | ModalKey[] = []) {
     const result = typeof modalKeys === 'object' ? modalKeys : [modalKeys];
     return result;
 }
 
-// 判断是否有循环引用
-export function hasLoop(obj) {
-    // 判断对象内部是否有和源相同的属性
-    function findLoop(target, src) {
-        // 源数组，并将自身传入
-        const source = [...src, target];
-
-        for (const key in target) {
-            // 如果是对象才需要判断
-            if (isObject(target[key])) {
-                // 如果在源数组中找到 || 递归查找内部属性找到相同
-                if (source.indexOf(target[key]) > -1 || findLoop(target[key], source)) {
-                    return true;
-                }
+export function extendsAll(child: Type, parents: Type[]) {
+    //遍历父类中的所有的属性，添加到子类的属性中中
+    parents.forEach(parent => {
+        //获取遍历到的父类中的所有属性
+        Object.getOwnPropertyNames(parent.prototype).forEach(name => {
+            if (name !== 'constructor') {
+                //父类中的属性，添加到子类的属性中
+                child.prototype[name] = parent.prototype[name];
             }
-        }
-        return false;
-    }
-
-    // 如果传入值是对象，则执行判断，否则返回false
-    return isObject(obj) ? findLoop(obj, []) : false;
+        });
+    });
 }

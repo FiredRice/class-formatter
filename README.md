@@ -10,6 +10,7 @@
 - [关于执行键](#关于执行键)<br>
 - [关于优先级](#关于优先级)<br>
 - [关于循环引用](#关于循环引用)<br>
+- [关于多继承](#关于多继承)<br>
 - [注意事项](#注意事项)<br>
   - [关于执行优先级](#note1)<br>
   - [关于 useDefineForClassFields](#note2)<br>
@@ -229,7 +230,7 @@ const formatUser = executeTransform(User, user, {
 |Rename|属性重命名|5|
 
 ## 关于循环引用
-类型装饰器内容不可循环引用。例如：
+类型装饰器内容不可循环引用，**也不会进行错误处理**。例如：
 ```ts
 class User {
     @toString()
@@ -240,7 +241,34 @@ class User {
 }
 ```
 - 上述代码中 `@toType(User)` 为非法转换，此时会导致类型转换出错。
-- 若被转换对象存在循环引用，则不会对数据格式化。
+- 若被转换对象存在循环引用，则会出现异常。
+
+## 关于多继承
+`typescript` 中并不存在多继承的概念，为实现更加灵活的模板组合方案，`class-formatter` 提供 `extendsAll` 方法实现多继承。
+
+例如：
+```ts
+class A {
+    @toString()
+    a!: string;
+}
+
+class B {
+    @toString()
+    b!: string;
+}
+
+class C implements A, B {
+    a!: string;
+    b!: string;
+
+    @toString()
+    c!: string;
+}
+
+extendsAll(C, [A, B]);
+```
+这样一来 `C` 即继承了 `A` 、`B` 的全部属性，又可以做为格式化模板。
 
 ## 注意事项
 **<div id='note1'>关于执行优先级</div>**

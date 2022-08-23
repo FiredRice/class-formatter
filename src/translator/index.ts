@@ -1,6 +1,5 @@
 import { Formatter } from '../decorators/format';
 import { Type, MergeOptions, NotMergeOptions } from '../types';
-import { hasLoop } from '../utils';
 
 /**
  * 执行转换
@@ -14,7 +13,6 @@ import { hasLoop } from '../utils';
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options?: NotMergeOptions): Required<T>;
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options?: MergeOptions): K & Required<T>;
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options = {}) {
-    if (hasLoop(values)) return values;
     Formatter(ClassType);
     const instance: any = new ClassType();
     instance[Symbol.for('formatter_setValues')]?.(values || {});
