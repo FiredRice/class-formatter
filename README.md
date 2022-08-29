@@ -65,9 +65,9 @@ const formatUser = executeTransform(User, user);
 |toBoolean|若属性为非布尔类型，则将属性转换为 `boolean` 类型|(value?: [BooleanConfig](#BooleanConfig)) => [Decorator](#Decorator)|defaultValue: false|
 |toType|若属性为非对象类型，则将属性转换为对象。<br>若指定了 `Type`，则可以将类型转换为 `Type` 的类型。|(value?: [ObjectConfig](#ObjectConfig) \| Type) => [Decorator](#Decorator)|defaultValue: {}|
 |toArray|若属性为非数组类型，则将属性转换为数组。<br>若指定了 `Type`，则可以将数组内所有数据转换为 `Type` 的类型。|(value?: [ArrayConfig](#ArrayConfig) \| Type) => [Decorator](#Decorator)|defaultValue: []|
-|Remove|移除属性|(keys?: [ModalKey](#ModalKey) \| [ModalKey](#ModalKey)[]) => [Decorator](#Decorator)|--|
-|Format|对属性进行自定义格式化。<br>**注意：Format 会在所有内置校验结束后执行，且不限制返回值类型，使用时请格外注意**|(callback: [FormatCallback](#FormatCallback), keys?: [ModalKey](#ModalKey) \| [ModalKey](#ModalKey)[]) => [Decorator](#Decorator)|--|
-|Rename|对属性重命名。|(name: string, keys?: [ModalKey](#ModalKey) \| [ModalKey](#ModalKey)[]) => [Decorator](#Decorator)|--|
+|Remove|移除属性|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
+|Format|对属性进行自定义格式化。<br>**注意：Format 会在所有内置校验结束后执行，且不限制返回值类型，使用时请格外注意**|(callback: [FormatCallback](#FormatCallback), keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
+|Rename|对属性重命名。|(name: string, keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 
 **executeTransform**
 |参数名称|说明|类型|
@@ -87,7 +87,7 @@ type Decorator =  (target: any, propertyKey: string) => void;
 type NumberConfig = { 
     defaultValue?: number;
     autoTrans?: boolean;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 ```
 
@@ -96,7 +96,7 @@ type NumberConfig = {
 type StringConfig = { 
     defaultValue?: string;
     autoTrans?: boolean;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 ```
 
@@ -104,7 +104,7 @@ type StringConfig = {
 ```ts
 type BooleanConfig = { 
     defaultValue?: boolean;
-    keys?: ModalKey | ModalKey[]; 
+    keys?: ModelKey | ModelKey[]; 
 };
 ```
 
@@ -113,7 +113,7 @@ type BooleanConfig = {
 type ObjectConfig<T = any> = { 
     defaultValue?: Partial<T>; 
     ClassType?: Type<T>;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 ```
 
@@ -122,7 +122,7 @@ type ObjectConfig<T = any> = {
 type ArrayConfig<T = any> = { 
     defaultValue?: Partial<T>[]; 
     ClassType?: Type<T>;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 ```
 
@@ -143,22 +143,22 @@ interface Type<T = any> extends Function {
 }
 ```
 
-**<div id='ModalKey'>ModalKey</div>** 执行键类型
+**<div id='ModelKey'>ModelKey</div>** 执行键类型
 ```ts
-type ModalKey = string | number;
+type ModelKey = string | number;
 ```
 
 **<div id='FormatOptions'>FormatOptions</div>**
 ```ts
 type FormatOptions = {
     mergeSource?: boolean;
-    key?: ModalKey;
+    key?: ModelKey;
 }
 ```
 |名称|说明|类型|
 |---|---|---|
 |mergeSource|是否将 **不存在于模板中** 的属性合并到格式化结果中|boolean|
-|key|[执行键](#关于执行键)|[ModalKey](#ModalKey)|
+|key|[执行键](#关于执行键)|[ModelKey](#ModelKey)|
 |shareValue|共享数据。可在自定义装饰器与 `Format` 中获取的额外数据|any|
 
 ## 自定义属性装饰器 
@@ -179,7 +179,7 @@ class User {
 |属性|说明|类型|
 |---|---|---|
 |callback|装饰器执行回调|(values, ...args) => any|
-|keys|可选参数 [执行键](#关于执行键)|[ModalKey](#ModalKey) \| [ModalKey](#ModalKey)[]|
+|keys|可选参数 [执行键](#关于执行键)|[ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]|
 
 **callback**
 |属性|说明|类型|
@@ -230,18 +230,68 @@ const formatUser = executeTransform(User, user, {
 |Rename|属性重命名|5|
 
 ## 关于循环引用
-类型装饰器内容不可循环引用，**也不会进行错误处理**。例如：
+- 若模板存在循环引用，则子模板中引用的父模板失效。
+- 若被转换对象存在循环引用，则忽略循环属性。
+
+**模板存在循环引用：**
 ```ts
-class User {
+// child.ts
+class Child {
     @toString()
     name!: string;
 
-    @toType(User)
-    child!: User;
+    @toType(Parent)
+    parent!: Parent;
 }
+
+// parent.ts
+class Parent {
+    @toString()
+    name!: string;
+
+    @toType(Child)
+    child: Child;
+}
+
+// index.ts
+// 子模板 Child 中的 Parent 会失效
+executeTransform(Parent, {});
 ```
-- 上述代码中 `@toType(User)` 为非法转换，此时会导致类型转换出错。
-- 若被转换对象存在循环引用，则会出现异常。
+**若被转换对象存在在循环引用：**
+```ts
+// child.ts
+class Child {
+    @toString()
+    name!: string;
+
+    @toType(Parent)
+    parent!: Parent;
+}
+
+// parent.ts
+class Parent {
+    @toString()
+    name!: string;
+
+    @toType(Child)
+    child: Child;
+}
+
+// index.ts
+const target = {
+    name: 4,
+    child: {
+        age: '2',
+        parent: null as any
+    }
+}
+
+target.child.parent = target;
+
+// target.child.parent 会被忽略
+executeTransform(Parent, target);
+```
+
 
 ## 关于多继承
 `typescript` 中并不存在多继承的概念，为实现更加灵活的模板组合方案，`class-formatter` 提供 `extendsAll` 方法实现多继承。
@@ -268,7 +318,29 @@ class C implements A, B {
 
 extendsAll(C, [A, B]);
 ```
-这样一来 `C` 即继承了 `A` 、`B` 的全部属性，又可以做为格式化模板。
+如此 `C` 便即继承了 `A` 、`B` 的全部属性，又可以做为格式化模板。
+
+同时提供了 `ExtendsAll` 类装饰器来简化多继承。
+```ts
+class A {
+    @toString()
+    a!: string;
+}
+
+class B {
+    @toString()
+    b!: string;
+}
+
+@ExtendsAll(A, B)
+class C implements A, B {
+    a!: string;
+    b!: string;
+
+    @toString()
+    c!: string;
+}
+```
 
 ## 注意事项
 **<div id='note1'>关于执行优先级</div>**

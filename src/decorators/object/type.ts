@@ -26,7 +26,7 @@ export function toType<T = any>(value?: ObjectConfig<T> | Type<T>) {
                 defaultValue,
                 ClassType
             },
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
         });
     };

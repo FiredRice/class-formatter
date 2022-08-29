@@ -1,7 +1,7 @@
-import { ModalKey, Type } from '../types';
+import { ModelKey, Type } from '../types';
 
-export function useModelKeys(modalKeys: ModalKey | ModalKey[] = []) {
-    const result = typeof modalKeys === 'object' ? modalKeys : [modalKeys];
+export function useModelKeys(modelKeys: ModelKey | ModelKey[] = []) {
+    const result = typeof modelKeys === 'object' ? modelKeys : [modelKeys];
     return result;
 }
 
@@ -17,3 +17,5 @@ export function extendsAll(child: Type, parents: Type[]) {
         });
     });
 }
+
+export * from './translators';

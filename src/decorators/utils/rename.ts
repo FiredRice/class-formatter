@@ -1,5 +1,5 @@
 import { LOW_PRORITY } from '../../config';
-import { ModalKey } from '../../types';
+import { ModelKey } from '../../types';
 import { useModelKeys } from '../../utils';
 
 /**
@@ -7,13 +7,13 @@ import { useModelKeys } from '../../utils';
  * @param name 新名字
  * @param keys 执行键
  */
-export function Rename(name: string, keys?: ModalKey | ModalKey[]) {
+export function Rename(name: string, keys?: ModelKey | ModelKey[]) {
     return (target, propertyKey: string) => {
         target[propertyKey] = target[propertyKey] || [];
         target[propertyKey].push({
             type: 'rename',
             value: name,
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: LOW_PRORITY
         });
     };

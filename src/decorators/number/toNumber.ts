@@ -25,7 +25,7 @@ export function toNumber(value: NumberConfig | number = 0) {
                 defaultValue,
                 autoTrans
             },
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
         });
     };

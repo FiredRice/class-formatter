@@ -26,7 +26,7 @@ export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>) {
                 defaultValue,
                 ClassType
             },
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
         });
     };

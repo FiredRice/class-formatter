@@ -20,7 +20,7 @@ export function toBoolean(value: BooleanConfig | boolean = false) {
         target[propertyKey].push({
             type: 'boolean',
             value: defaultValue,
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
         });
     };

@@ -2,40 +2,40 @@
 export type ArrayConfig<T = any> = {
     defaultValue?: Partial<T>[];
     ClassType?: Type<T>;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 
 export type NumberConfig = {
     defaultValue?: number;
     autoTrans?: boolean;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 
 export type StringConfig = {
     defaultValue?: string;
     autoTrans?: boolean;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 
 export type BooleanConfig = {
     defaultValue?: boolean;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 
 export type ObjectConfig<T = any> = {
     defaultValue?: Partial<T>;
     ClassType?: Type<T>;
-    keys?: ModalKey | ModalKey[];
+    keys?: ModelKey | ModelKey[];
 };
 
 
 export type Callback<T = any> = (values: Readonly<T>, shareValue: any, ...args) => any;
 
-export type ModalKey = string | number;
+export type ModelKey = string | number;
 
 
 interface BaseOptions {
-    key?: ModalKey;
+    key?: ModelKey;
     shareValue?: any;
 }
 
@@ -73,7 +73,7 @@ interface Command {
     type: CommandType;
     value: any;
     priority: number;
-    modalKeys: ModalKey[];
+    modelKeys: ModelKey[];
 }
 
 export type Commands = Command[];

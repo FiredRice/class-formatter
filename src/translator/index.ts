@@ -1,5 +1,6 @@
-import { Formatter } from '../decorators/format';
+import { subTransform } from '../utils';
 import { Type, MergeOptions, NotMergeOptions } from '../types';
+import { transtargetMap } from '../config';
 
 /**
  * 执行转换
@@ -13,9 +14,8 @@ import { Type, MergeOptions, NotMergeOptions } from '../types';
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options?: NotMergeOptions): Required<T>;
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options?: MergeOptions): K & Required<T>;
 export function executeTransform<T = any, K = any>(ClassType: Type<T>, values: K, options = {}) {
-    Formatter(ClassType);
-    const instance: any = new ClassType();
-    instance[Symbol.for('formatter_setValues')]?.(values || {});
-    instance[Symbol.for('formatter_toFormat')]?.(options);
-    return instance[Symbol.for('formatter_getFormatResult')]?.() || values;
+    transtargetMap.set(values, true);
+    const result = subTransform(ClassType, values, options);
+    transtargetMap.clear();
+    return result;
 }

@@ -1,5 +1,5 @@
 import { LOWER_MIDDLE_PRORITY } from '../../config';
-import { Callback, ModalKey } from '../../types';
+import { Callback, ModelKey } from '../../types';
 import { useModelKeys } from '../../utils';
 
 /**
@@ -8,7 +8,7 @@ import { useModelKeys } from '../../utils';
  * @param keys 执行键
  * @return (...args) => DecoratorFun
  */
-export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: ModalKey | ModalKey[]) {
+export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: ModelKey | ModelKey[]) {
     return (...args) => {
         return (target, propertyKey: string) => {
             target[propertyKey] = target[propertyKey] || [];
@@ -18,7 +18,7 @@ export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: Mod
                     args,
                     callback
                 },
-                modalKeys: useModelKeys(keys),
+                modelKeys: useModelKeys(keys),
                 priority: LOWER_MIDDLE_PRORITY
             });
         };

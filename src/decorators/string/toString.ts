@@ -25,7 +25,7 @@ export function toString(value: StringConfig | string = '') {
                 defaultValue,
                 autoTrans
             },
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
         });
     };

@@ -1,5 +1,5 @@
 import { MEDIUM_PRORITY } from '../../config';
-import { ModalKey } from '../../types';
+import { ModelKey } from '../../types';
 import { useModelKeys } from '../../utils';
 
 /**
@@ -7,13 +7,13 @@ import { useModelKeys } from '../../utils';
  * @param callback 执行回调 
  * @param keys 执行键
  */
-export function Format(callback: (value: any, target: Readonly<any>, shareValue: any) => any, keys?: ModalKey | ModalKey[]) {
+export function Format(callback: (value: any, target: Readonly<any>, shareValue: any) => any, keys?: ModelKey | ModelKey[]) {
     return (target, propertyKey: string) => {
         target[propertyKey] = target[propertyKey] || [];
         target[propertyKey].push({
             type: 'format',
             value: callback,
-            modalKeys: useModelKeys(keys),
+            modelKeys: useModelKeys(keys),
             priority: MEDIUM_PRORITY
         });
     };
