@@ -236,21 +236,21 @@ const formatUser = executeTransform(User, user, {
 **模板存在循环引用：**
 ```ts
 // child.ts
-class Child {
-    @toString()
-    name!: string;
+export class Child {
+    @toNumber()
+    age!: number;
 
     @toType(Parent)
     parent!: Parent;
 }
 
 // parent.ts
-class Parent {
+export class Parent {
     @toString()
     name!: string;
 
     @toType(Child)
-    child: Child;
+    child!: Child;
 }
 
 // index.ts
@@ -260,21 +260,21 @@ executeTransform(Parent, {});
 **若被转换对象存在在循环引用：**
 ```ts
 // child.ts
-class Child {
-    @toString()
-    name!: string;
+export class Child {
+    @toNumber()
+    age!: number;
 
     @toType(Parent)
     parent!: Parent;
 }
 
 // parent.ts
-class Parent {
+export class Parent {
     @toString()
     name!: string;
 
     @toType(Child)
-    child: Child;
+    child!: Child;
 }
 
 // index.ts

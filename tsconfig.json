@@ -24,6 +24,5 @@
 		"lib",
 		"bin",
 		"node_modules",
-		"src/test/**"
 	]
 }

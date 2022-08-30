@@ -3,15 +3,14 @@ import isBoolean from 'lodash/isBoolean';
 import isNumber from 'lodash/isNumber';
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
-import { transtargetMap } from '../config';
-import { Commands, FormatOptions, Type } from '../types';
+import { Commands, FormatOptions } from '../types';
 
 /**
  * 数字校验
  * @param target 被校验值
  * @param options 被校验信息
- * @param defaultValue 默认值
- * @param autoTrans 是否自动转换为数字
+ * @param - defaultValue 默认值
+ * @param - autoTrans 是否自动转换为数字
  * @returns 转换结果
  */
 export function transNumber(target, options: any): number {
@@ -32,8 +31,8 @@ export function transNumber(target, options: any): number {
  * 字符串校验
  * @param target 被校验值
  * @param options 被校验信息
- * @param defaultValue 默认值
- * @param autoTrans 是否自动转换为字符串
+ * @param - defaultValue 默认值
+ * @param - autoTrans 是否自动转换为字符串
  * @returns 转换结果
  */
 export function transString(target, options: any): string {
@@ -67,20 +66,22 @@ export function transBoolean(target, defaultValue: boolean): boolean {
  * 数组校验
  * @param target 被校验值
  * @param options 被校验信息
- * @param defaultValue 默认值
- * @param ClassType 对象类
+ * @param - defaultValue 默认值
+ * @param - ClassType 对象类
+ * @param transTargetMap 引用对象集合
  * @returns 转换结果
  */
-export function transArray(target, options, transOptions?: any): any {
+export function transArray(target, options, transTargetMap, transOptions?: any): any {
     const { defaultValue, ClassType } = options;
     const isArr = isArray(target);
-    if (ClassType && !transtargetMap.has(target)) {
+    if (ClassType && !transTargetMap.has(target)) {
         const executeArr = isArr ? target : defaultValue || [];
         if (executeArr.length) {
             if (isArr) {
-                transtargetMap.set(target, true);
+                transTargetMap.set(target, true);
             }
-            return executeArr.map(item => subTransform(ClassType, item, transOptions));
+            const instance: any = new ClassType();
+            return executeArr.map(item => subTransform(instance, item, transTargetMap, transOptions));
         }
         return defaultValue || [];
     }
@@ -94,18 +95,20 @@ export function transArray(target, options, transOptions?: any): any {
  * 对象校验
  * @param target 被校验值
  * @param options 被校验信息
- * @param defaultValue 默认值
- * @param ClassType 对象类
+ * @param - defaultValue 默认值
+ * @param - ClassType 对象类
+ * @param transTargetMap 引用对象集合
  * @returns 转换结果
  */
-export function transObject(target, options, transOptions?: any): any {
+export function transObject(target, options, transTargetMap, transOptions?: any): any {
     const { defaultValue, ClassType } = options;
     const isObj = isObject(target) && !isArray(target);
-    if (ClassType && !transtargetMap.has(target)) {
+    if (ClassType && !transTargetMap.has(target)) {
         if (isObj) {
-            transtargetMap.set(target, true);
+            transTargetMap.set(target, true);
         }
-        return subTransform(ClassType, isObj ? target : defaultValue || {}, transOptions) || defaultValue || {};
+        const instance: any = new ClassType();
+        return subTransform(instance, isObj ? target : defaultValue || {}, transTargetMap, transOptions) || defaultValue || {};
     }
     if (isObj) {
         return target;
@@ -129,14 +132,12 @@ export function transCustom(values, shareData, callback, args): any {
  * 转换函数
  * @param ClassType 模板类型
  * @param values 源数据
+ * @param transTargetMap 引用对象集合
  * @param options 配置项
- * @param deep 转换深度
  * @returns 转换结果
  */
-export function subTransform(ClassType: Type, values, options: FormatOptions) {
+export function subTransform(model, values, transTargetMap, options: FormatOptions) {
     const { mergeSource = false, key: modelKey, shareValue } = options;
-
-    const model: any = new ClassType();
 
     // 结果集
     const result: any = {};
@@ -181,10 +182,10 @@ export function subTransform(ClassType: Type, values, options: FormatOptions) {
                         result[key] = transBoolean(element, value);
                         break;
                     case 'object':
-                        result[key] = transObject(element, value, options);
+                        result[key] = transObject(element, value, transTargetMap, options);
                         break;
                     case 'array':
-                        result[key] = transArray(element, value, options);
+                        result[key] = transArray(element, value, transTargetMap, options);
                         break;
                     case 'remove':
                         break;
@@ -235,10 +236,10 @@ export function subTransform(ClassType: Type, values, options: FormatOptions) {
                         result[key] = transBoolean(result[key], value);
                         break;
                     case 'array':
-                        result[key] = transArray(result[key], value, options);
+                        result[key] = transArray(result[key], value, transTargetMap, options);
                         break;
                     case 'object':
-                        result[key] = transObject(result[key], value, options);
+                        result[key] = transObject(result[key], value, transTargetMap, options);
                         break;
                     case 'remove':
                         delete result[key];
