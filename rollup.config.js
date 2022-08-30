@@ -19,6 +19,12 @@ export default {
 			plugins: [terser()],
 		},
 	],
+	onwarn: function (warning) {
+		if (warning.code === 'THIS_IS_UNDEFINED') {
+			return;
+		}
+		console.error(warning.message);
+	},
 	plugins: [commonjs(), nodeResolve()],
-	external: ['lodash']
+	external: ['lodash'],
 };

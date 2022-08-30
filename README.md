@@ -133,8 +133,8 @@ type FormatCallback = (item, values) => any;
 |名称|说明|
 |---|---|
 |item|被装饰属性 **被格式化后** 的值|
-|values|被格式化对象<br>**注意：出于性能考虑，此处的 values 仅为被格式化数据的浅拷贝**|
-|shareValue|共享数据<br>**注意：出于性能考虑，此处的 shareValue 仅为共享数据的浅拷贝**|
+|values|被格式化对象<br>**注意：values 为被格式化对象的直接引用，请勿在格式化过程中对其进行修改**|
+|shareValue|共享数据<br>**注意：shareValue 为共享数据对象的直接引用，请勿在格式化过程中对其进行修改**|
 
 **<div id='Type'>Type</div>**
 ```ts
@@ -184,8 +184,8 @@ class User {
 **callback**
 |属性|说明|类型|
 |---|---|---|
-|values|被格式化数据对象<br>**注意：出于性能考虑，此处的 values 仅为被格式化数据的浅拷贝**|any|
-|shareValue|共享数据<br>**注意：出于性能考虑，此处的 shareValue 仅为共享数据的浅拷贝**|any|
+|values|被格式化数据对象<br>**注意：values 为被格式化对象的直接引用，请勿在格式化过程中对其进行修改**|any|
+|shareValue|共享数据<br>**注意：shareValue 为共享数据对象的直接引用，请勿在格式化过程中对其进行修改**|any|
 |args|在生成的装饰器中传入的参数|any[]|
 
 ## 关于执行键
