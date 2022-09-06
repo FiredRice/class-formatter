@@ -197,8 +197,8 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
                         break;
                     case 'rename':
                         result[value] = result[key];
-                        delete result[key];
-                        delete templateKeysMap[value];
+                        Reflect.deleteProperty(result, key);
+                        Reflect.deleteProperty(templateKeysMap, value);
                         break;
                     default:
                         if (mergeSource) {
@@ -210,7 +210,7 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
         } else if (templateKeysMap[key] || !templateKeysMap[key] && mergeSource) {
             result[key] = element;
         }
-        delete templateKeysMap[key];
+        Reflect.deleteProperty(templateKeysMap, key);
     }
 
     // 对未在源数据中出现，且在模板中存在的属性进行格式化
@@ -252,7 +252,7 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
                         break;
                     case 'rename':
                         result[value] = result[key];
-                        delete result[key];
+                        Reflect.deleteProperty(result, key);
                         break;
                     default:
                         result[key] = initResults[key];

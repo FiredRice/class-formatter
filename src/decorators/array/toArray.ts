@@ -6,8 +6,8 @@ import { useModelKeys } from '../../utils';
  * 转换为数组，默认 []
  * @param value 配置项
  */
-export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>) {
-    return (target, propertyKey: string) => {
+export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>): PropertyDecorator {
+    return (target, propertyKey) => {
         let defaultValue: any[] = [];
         let ClassType;
         let keys;

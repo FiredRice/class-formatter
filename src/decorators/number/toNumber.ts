@@ -6,8 +6,8 @@ import { useModelKeys } from '../../utils';
  * 转换为数字，默认 0
  * @param value 配置项
  */
-export function toNumber(value: NumberConfig | number = 0) {
-    return (target, propertyKey: string) => {
+export function toNumber(value: NumberConfig | number = 0): PropertyDecorator {
+    return (target, propertyKey) => {
         let defaultValue = 0;
         let autoTrans = true;
         let keys;

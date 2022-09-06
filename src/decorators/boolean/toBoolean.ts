@@ -6,8 +6,8 @@ import { useModelKeys } from '../../utils';
  * 转换为布尔，默认 false
  * @param value 配置项
  */
-export function toBoolean(value: BooleanConfig | boolean = false) {
-    return (target, propertyKey: string) => {
+export function toBoolean(value: BooleanConfig | boolean = false): PropertyDecorator {
+    return (target, propertyKey) => {
         let defaultValue = false;
         let keys;
         if (typeof value === 'boolean') {

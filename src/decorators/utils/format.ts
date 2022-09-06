@@ -7,8 +7,8 @@ import { useModelKeys } from '../../utils';
  * @param callback 执行回调 
  * @param keys 执行键
  */
-export function Format(callback: (value: any, target: Readonly<any>, shareValue: any) => any, keys?: ModelKey | ModelKey[]) {
-    return (target, propertyKey: string) => {
+export function Format(callback: (value: any, target: Readonly<any>, shareValue: any) => any, keys?: ModelKey | ModelKey[]): PropertyDecorator {
+    return (target, propertyKey) => {
         target[propertyKey] = target[propertyKey] || [];
         target[propertyKey].push({
             type: 'format',

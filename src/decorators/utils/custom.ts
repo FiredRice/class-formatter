@@ -9,8 +9,8 @@ import { useModelKeys } from '../../utils';
  * @return (...args) => DecoratorFun
  */
 export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: ModelKey | ModelKey[]) {
-    return (...args) => {
-        return (target, propertyKey: string) => {
+    return (...args): PropertyDecorator => {
+        return (target, propertyKey) => {
             target[propertyKey] = target[propertyKey] || [];
             target[propertyKey].push({
                 type: 'custom',

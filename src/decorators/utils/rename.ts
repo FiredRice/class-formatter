@@ -7,8 +7,8 @@ import { useModelKeys } from '../../utils';
  * @param name 新名字
  * @param keys 执行键
  */
-export function Rename(name: string, keys?: ModelKey | ModelKey[]) {
-    return (target, propertyKey: string) => {
+export function Rename(name: string, keys?: ModelKey | ModelKey[]): PropertyDecorator {
+    return (target, propertyKey) => {
         target[propertyKey] = target[propertyKey] || [];
         target[propertyKey].push({
             type: 'rename',

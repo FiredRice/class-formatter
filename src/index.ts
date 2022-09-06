@@ -1,4 +1,4 @@
 
 export * from './decorators';
 export * from './translator';
-export { extendsAll } from './utils';
+export { mixins } from './utils';

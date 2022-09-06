@@ -6,8 +6,8 @@ import { useModelKeys } from '../../utils';
  * 转换为指定类型，默认 {}
  * @param value 配置项
  */
-export function toType<T = any>(value?: ObjectConfig<T> | Type<T>) {
-    return (target, propertyKey: string) => {
+export function toType<T = any>(value?: ObjectConfig<T> | Type<T>): PropertyDecorator {
+    return (target, propertyKey) => {
         let defaultValue = {};
         let ClassType;
         let keys;

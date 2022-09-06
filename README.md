@@ -10,7 +10,7 @@
 - [关于执行键](#关于执行键)<br>
 - [关于优先级](#关于优先级)<br>
 - [关于循环引用](#关于循环引用)<br>
-- [关于多继承](#关于多继承)<br>
+- [关于混入](#关于混入)<br>
 - [注意事项](#注意事项)<br>
   - [关于执行优先级](#note1)<br>
   - [关于 useDefineForClassFields](#note2)<br>
@@ -293,8 +293,8 @@ executeTransform(Parent, target);
 ```
 
 
-## 关于多继承
-`typescript` 中并不存在多继承的概念，为实现更加灵活的模板组合方案，`class-formatter` 提供 `extendsAll` 方法实现多继承。
+## 关于混入
+`typescript` 中并不存在多继承的概念，为实现更加灵活的模板组合方案，`class-formatter` 提供 `mixins` 方法实现多继承。
 
 例如：
 ```ts
@@ -316,11 +316,11 @@ class C implements A, B {
     c!: string;
 }
 
-extendsAll(C, [A, B]);
+mixins(C, [A, B]);
 ```
-如此 `C` 便即继承了 `A` 、`B` 的全部属性，又可以做为格式化模板。
+如此 `C` 便即继承了 `A` 、`B` 的全部装饰器指令，又可以做为格式化模板。
 
-同时提供了 `ExtendsAll` 类装饰器来简化多继承。
+同时提供了 `Mixins` 类装饰器来简化混入。
 ```ts
 class A {
     @toString()
@@ -332,13 +332,13 @@ class B {
     b!: string;
 }
 
-@ExtendsAll(A, B)
+@Mixins(A, B)
 class C implements A, B {
-    a!: string;
-    b!: string;
-
     @toString()
     c!: string;
+
+    a!: string;
+    b!: string;
 }
 ```
 
