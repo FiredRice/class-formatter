@@ -126,7 +126,7 @@ export type DecoratorFun = (target: any, propertyKey: string) => void;
 
 export type TranSwitchConfig = {
     keys: (string | symbol)[];
-    values?: any;
+    values: any;
     initResults: any;
     transTargetMap: Map<any, any>;
     options: FormatOptions;

@@ -223,7 +223,7 @@ function getEffectCommands(commands: Commands, modelKey?: ModelKey) {
  * @param config 配置项
  */
 function transSwitch(result, executePlan, config: TranSwitchConfig) {
-    const { keys, values = {}, initResults, transTargetMap, options, removeCommands } = config;
+    const { keys, values, initResults, transTargetMap, options, removeCommands } = config;
     const { key: modelKey, shareValue } = options || {};
 
     for (let i = keys.length - 1; i >= 0; i--) {
@@ -325,6 +325,7 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
     const lastCommandKeys = getOwnKeys(executePlan);
     transSwitch(result, executePlan, {
         keys: lastCommandKeys,
+        values,
         initResults,
         transTargetMap,
         options,
