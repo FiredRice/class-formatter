@@ -1,13 +1,13 @@
 import { HIGH_PRORITY } from '../../config';
 import { StringConfig } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 转换为字符串，默认 ''
  * @param value 配置项
  */
 export function toString(value: StringConfig | string = ''): PropertyDecorator {
-    return (target, propertyKey) => {
+    return function (target: any, propertyKey) {
         let defaultValue = '';
         let autoTrans = true;
         let keys;
@@ -18,8 +18,7 @@ export function toString(value: StringConfig | string = ''): PropertyDecorator {
             autoTrans = value.autoTrans || true;
             keys = value.keys;
         }
-        target[propertyKey] = target[propertyKey] || [];
-        target[propertyKey].push({
+        commandsRegist(target, propertyKey, {
             type: 'string',
             value: {
                 defaultValue,

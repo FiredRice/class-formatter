@@ -1,6 +1,6 @@
 import { LOWER_MIDDLE_PRORITY } from '../../config';
 import { Callback, ModelKey } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 创建自定义属性装饰器
@@ -9,10 +9,9 @@ import { useModelKeys } from '../../utils';
  * @return (...args) => DecoratorFun
  */
 export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: ModelKey | ModelKey[]) {
-    return (...args): PropertyDecorator => {
-        return (target, propertyKey) => {
-            target[propertyKey] = target[propertyKey] || [];
-            target[propertyKey].push({
+    return function (...args): PropertyDecorator {
+        return function (target, propertyKey) {
+            commandsRegist(target, propertyKey, {
                 type: 'custom',
                 value: {
                     args,

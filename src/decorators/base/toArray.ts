@@ -1,15 +1,16 @@
 import { HIGH_PRORITY } from '../../config';
 import { ArrayConfig, Type } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 转换为数组，默认 []
  * @param value 配置项
  */
 export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>): PropertyDecorator {
-    return (target, propertyKey) => {
+    return function (target, propertyKey) {
         let defaultValue: any[] = [];
         let ClassType;
+        let map;
         let keys;
         if (typeof value === 'function') {
             ClassType = value;
@@ -17,14 +18,14 @@ export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>): PropertyDeco
             defaultValue = value.defaultValue || [];
             ClassType = value.ClassType;
             keys = value.keys;
+            map = value.map;
         }
-
-        target[propertyKey] = target[propertyKey] || [];
-        target[propertyKey].push({
+        commandsRegist(target, propertyKey, {
             type: 'array',
             value: {
                 defaultValue,
-                ClassType
+                ClassType,
+                map
             },
             modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY

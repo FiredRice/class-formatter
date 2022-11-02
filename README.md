@@ -10,10 +10,13 @@
 - [关于执行键](#关于执行键)<br>
 - [关于优先级](#关于优先级)<br>
 - [关于循环引用](#关于循环引用)<br>
+  - [多模板循间环引用](#多模板循间环引用)<br>
+  - [被转换对象存在在循环引用](#被转换对象存在在循环引用)<br>
+  - [模板自循环](#模板自循环)<br>
 - [关于混入](#关于混入)<br>
 - [注意事项](#注意事项)<br>
   - [关于执行优先级](#note1)<br>
-  - [关于 useDefineForClassFields](#note2)<br>
+  - [关于使用](#note2)<br>
 
 ## 简介
 一套装饰器风格的数据格式化方法。 
@@ -24,19 +27,14 @@
 
 `yarn add class-formatter`
 
+项目依赖 `lodash`，因此您还可以安装：
 
 `yarn add @types/lodash -D`
 
-在 `typescript` 项目中，您还需对 `tsconfig.json` 进行如下配置来体验完整功能。
-```ts
-{
-    "compilerOptions": {
-        "useDefineForClassFields": true
-    }
-}
-```
 
 ## 使用方法
+
+#### 普通对象
 ```ts
 class User {
     @toString()
@@ -57,17 +55,54 @@ const formatUser = executeTransform(User, user);
 
 在上述例子中，`formatUser` 一定拥有 **字符串类型** 属性 `name` ，**数字类型** 属性 `age`。
 
+#### 数组
+```ts
+class User {
+    @toString()
+    name!: string;
+
+    @toNumber()
+    age!: number;
+}
+
+const users = [{
+    name: '张三',
+    age: '18'
+}];
+
+const formatUsers = executeTransArray(User, users);
+```
+若被格式化数据为数字，则可以使用 `executeTransArray` 进行格式化。
+
+#### 默认值
+```ts
+class User {
+    @toString()
+    name: string = '张三';
+
+    @toNumber(1)
+    age!: number;
+}
+```
+默认值有两种传入方式，模板传入与装饰器传入，其中模板传入优先级 **高于** 装饰器传入
+
 ## <div id='API'>API</div>
 |属性装饰器|说明|类型|默认值|
 |---|---|---|---|
-|toNumber|若属性为非数字类型，则将属性转换为 `number` 类型。<br>`autoTrans` 为 `true` 时会自动将字符串转换为数字。|(value?: [NumberConfig](#NumberConfig)) => [Decorator](#Decorator)|defaultValue: 0<br>autoTrans: true|
-|toString|若属性为非字符串类型，则将属性转换为 `string` 类型。<br>`autoTrans` 为 `true` 时会自动将数字转换为字符串。|(value?: [StringConfig](#StringConfig)) => [Decorator](#Decorator)|defaultValue: ''<br>autoTrans: true|
-|toBoolean|若属性为非布尔类型，则将属性转换为 `boolean` 类型|(value?: [BooleanConfig](#BooleanConfig)) => [Decorator](#Decorator)|defaultValue: false|
+|toNumber|若属性为非数字类型，则将属性转换为 `number` 类型。<br>`autoTrans` 为 `true` 时会自动将字符串转换为数字。|(value?: [NumberConfig](#NumberConfig) \| number) => [Decorator](#Decorator)|defaultValue: 0<br>autoTrans: true|
+|toString|若属性为非字符串类型，则将属性转换为 `string` 类型。<br>`autoTrans` 为 `true` 时会自动将数字转换为字符串。|(value?: [StringConfig](#StringConfig) \| string) => [Decorator](#Decorator)|defaultValue: ''<br>autoTrans: true|
+|toBoolean|若属性为非布尔类型，则将属性转换为 `boolean` 类型|(value?: [BooleanConfig](#BooleanConfig) \| boolean) => [Decorator](#Decorator)|defaultValue: false|
+|toSymbol|若属性为非 `symbol` 类型，则将属性转换为 `symbol` 类型|(value?: [SymbolConfig](#SymbolConfig) \| symbol) => [Decorator](#Decorator)|defaultValue: Symbol()|
+|toRegExp|若属性为非正则类型，则将属性转换为正则类型|(value?: [RegConfig](#RegConfig) \| RegExp \| string) => [Decorator](#Decorator)|defaultValue: new RegExp('')|
 |toType|若属性为非对象类型，则将属性转换为对象。<br>若指定了 `Type`，则可以将类型转换为 `Type` 的类型。|(value?: [ObjectConfig](#ObjectConfig) \| Type) => [Decorator](#Decorator)|defaultValue: {}|
 |toArray|若属性为非数组类型，则将属性转换为数组。<br>若指定了 `Type`，则可以将数组内所有数据转换为 `Type` 的类型。|(value?: [ArrayConfig](#ArrayConfig) \| Type) => [Decorator](#Decorator)|defaultValue: []|
 |Remove|移除属性|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 |Format|对属性进行自定义格式化。<br>**注意：Format 会在所有内置校验结束后执行，且不限制返回值类型，使用时请格外注意**|(callback: [FormatCallback](#FormatCallback), keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 |Rename|对属性重命名。|(name: string, keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
+
+|方法装饰器|说明|类型|默认值|
+|---|---|---|---|
+|ExtendMethod|在结果中继承被装饰的方法或访问器|() => MethodDecorator|--|
 
 **executeTransform**
 |参数名称|说明|类型|
@@ -75,6 +110,13 @@ const formatUser = executeTransform(User, user);
 |ClassType|模板类|[Type](#Type)|
 |values|被格式化对象|any|
 |options|配置项|[FormatOptions](#FormatOptions)|
+
+**executeTransArray**
+|参数名称|说明|类型|
+|---|---|---|
+|ClassType|模板类|[Type](#Type)|
+|values|被格式化对象|any[]|
+|options|配置项|[FormatArrOptions](#FormatArrOptions)|
 ## <div id='Interface'>Interface</div>
 
 **<div id='Decorator'>Decorator</div>**
@@ -108,6 +150,22 @@ type BooleanConfig = {
 };
 ```
 
+**<div id='SymbolConfig'>SymbolConfig</div>**
+```ts
+type SymbolConfig = { 
+    defaultValue?: symbol;
+    keys?: ModelKey | ModelKey[]; 
+};
+```
+
+**<div id='RegConfig'>RegConfig</div>**
+```ts
+type RegConfig = { 
+    defaultValue?: Regexp | string;
+    keys?: ModelKey | ModelKey[]; 
+};
+```
+
 **<div id='ObjectConfig'>ObjectConfig</div>**
 ```ts
 type ObjectConfig<T = any> = { 
@@ -123,6 +181,7 @@ type ArrayConfig<T = any> = {
     defaultValue?: Partial<T>[]; 
     ClassType?: Type<T>;
     keys?: ModelKey | ModelKey[];
+    map?: (value: T, index: number, array: T[]) => T;
 };
 ```
 
@@ -153,6 +212,19 @@ type ModelKey = string | number;
 type FormatOptions = {
     mergeSource?: boolean;
     key?: ModelKey;
+    shareValue?: any;
+    deep?: number;
+}
+```
+
+**<div id='FormatArrOptions'>FormatArrOptions</div>**
+```ts
+type FormatArrOptions<T> = {
+    mergeSource?: boolean;
+    key?: ModelKey;
+    shareValue?: any;
+    deep?: number;
+    map?: (value: T, index: number, array: T[]) => T;
 }
 ```
 |名称|说明|类型|
@@ -160,10 +232,13 @@ type FormatOptions = {
 |mergeSource|是否将 **不存在于模板中** 的属性合并到格式化结果中|boolean|
 |key|[执行键](#关于执行键)|[ModelKey](#ModelKey)|
 |shareValue|共享数据。可在自定义装饰器与 `Format` 中获取的额外数据|any|
+|deep|格式化深度限制。[详情](#模板自循环) |boolean|
+|map|原生数组的 `map` 方法。仅在 `executeTransArray` 中生效|(value: T, index: number, array: T[]) => T|
+
 
 ## 自定义属性装饰器 
 ```ts
-const CustomDecorator = createFormatDecorator((values, ...args) => {
+const CustomDecorator = createFormatDecorator((values, shareValue, ...args) => {
     // ...Do something
     return values.name;
 });
@@ -178,7 +253,7 @@ class User {
 **createFormatDecorator**
 |属性|说明|类型|
 |---|---|---|
-|callback|装饰器执行回调|(values, ...args) => any|
+|callback|装饰器执行回调|(values, shareValue, ...args) => any|
 |keys|可选参数 [执行键](#关于执行键)|[ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]|
 
 **callback**
@@ -224,16 +299,18 @@ const formatUser = executeTransform(User, user, {
 |装饰器|描述|优先级|
 |---|---|---|
 |toXXX|内置的类型转换器|1|
+|ExtendMethod|继承模板的方法|1|
 |Format|内置的格式化工具|3|
 |Remove|移除属性|3|
 |自定义装饰器|通过 `createFormatDecorator` 创建的装饰器|4|
 |Rename|属性重命名|5|
 
 ## 关于循环引用
-- 若模板存在循环引用，则子模板中引用的父模板失效。
+- 若多个模板间存在循环引用，则子模板中引用的父模板失效（ `typescript` 自身限制）。
+- 若模板自身循环引用，则默认可格式化深度为 50，超过该深度的数据会被忽略。
 - 若被转换对象存在循环引用，则忽略循环属性。
 
-**模板存在循环引用：**
+#### 多模板循间环引用
 ```ts
 // child.ts
 export class Child {
@@ -257,7 +334,7 @@ export class Parent {
 // 子模板 Child 中的 Parent 会失效
 executeTransform(Parent, {});
 ```
-**若被转换对象存在在循环引用：**
+#### 被转换对象存在在循环引用
 ```ts
 // child.ts
 export class Child {
@@ -291,10 +368,48 @@ target.child.parent = target;
 // target.child.parent 会被忽略
 executeTransform(Parent, target);
 ```
+#### 模板自循环
 
+```ts
+class Person {
+    @toString()
+    name!: string;
+
+    @toType(Person)
+    child!: Person;
+}
+
+const target = {
+    name: '父亲',
+    child: {
+        name: 1
+    }
+}
+
+// target.child 会被忽略
+executeTransform(Person, {});
+```
+模板自循环理论上允许存在，但可能导致死循环。
+为防止模板自循环导致死循环，且保证格式化顺利进行，`class-formatter` 限制了执行嵌套深度，默认 50。超过深度的数据会停止格式化。
+可以通过 `options.deep` 自行调整深度。
+
+**死循环例：**
+```
+class Person {
+    @toString()
+    name!: string;
+
+    @toArray(Person)
+    childs: Person = [{}];
+}
+
+executeTransArray(Person, [{}], {
+    deep: 50
+});
+```
 
 ## 关于混入
-`typescript` 中并不存在多继承的概念，为实现更加灵活的模板组合方案，`class-formatter` 提供 `mixins` 方法实现多继承。
+为实现更加灵活的模板组合方案，`class-formatter` 提供 `mixins` 方法实现多模板组合。
 
 例如：
 ```ts
@@ -323,13 +438,13 @@ mixins(C, [A, B]);
 同时提供了 `Mixins` 类装饰器来简化混入。
 ```ts
 class A {
-    @toString()
-    a!: string;
+    @toString('A')
+    name!: string;
 }
 
 class B {
-    @toString()
-    b!: string;
+    @toString('B')
+    name!: string;
 }
 
 @Mixins(A, B)
@@ -337,17 +452,23 @@ class C implements A, B {
     @toString()
     c!: string;
 
-    a!: string;
-    b!: string;
+    name!: string;
 }
+
+const res = executeTransform(C, {});
+// res => { name: 'A', c: '' }
 ```
+
+`Mixins` 传参拥有优先级，当多个模板中存在相同的属性时，第一个参数的装饰器将会 **完全覆盖** 第二个参数的装饰器，以此类推。
+上述示例中，模板 A 的装饰器拥有最高优先级，B 模板中 `name` 属性的装饰器将会被 A 模板的 `name` 完全覆盖。
+
 
 ## 注意事项
 **<div id='note1'>关于执行优先级</div>**
-- class-formatter 只保证不同优先级装饰器的执行顺序，若同时存在相同优先级的装饰器，则 **同优先级之间的执行顺序无法保证** 。
+- `class-formatter` 只保证不同优先级装饰器的执行顺序，若同时存在相同优先级的装饰器，则 **同优先级之间的执行顺序无法保证** 。
 - 优先级 3 - 5 的装饰器可能会导致模板 **转换结果类型** 与 **模板类型** 不一致，使用时请格外注意。
 
-**<div id='note2'>关于 useDefineForClassFields</div>**
-- 若未开启 `useDefineForClassFields` ，则属性在源数据中不存在，在模板中存在，且模板中该属性没有装饰器时，该属性会被忽略。
-- 当开启 `useDefineForClassFields` 后，若属性在源数据中不存在，在模板中存在，且模板中该属性没有装饰器，则会将该属性合并到格式化结果，默认值为 `undefined` 。
-- 是否开启 `useDefineForClassFields` 请阅读 `typescript` 官方文档谨慎使用。
+**<div id='note2'>关于使用</div>**
+- 所有格式化规则均依赖装饰器，所有被装饰器装饰的属性、方法、访问器均会被格式化，其余属性、方法、访问器会被忽略。
+- 装饰器可以通过继承在多个模板间共享。
+- 多个模板可通过 `Mixins` 组合成一个大模板。

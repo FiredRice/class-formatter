@@ -1,13 +1,13 @@
 import { HIGH_PRORITY } from '../../config';
 import { NumberConfig } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 转换为数字，默认 0
  * @param value 配置项
  */
 export function toNumber(value: NumberConfig | number = 0): PropertyDecorator {
-    return (target, propertyKey) => {
+    return function (target, propertyKey) {
         let defaultValue = 0;
         let autoTrans = true;
         let keys;
@@ -18,8 +18,7 @@ export function toNumber(value: NumberConfig | number = 0): PropertyDecorator {
             autoTrans = value.autoTrans || true;
             keys = value.keys;
         }
-        target[propertyKey] = target[propertyKey] || [];
-        target[propertyKey].push({
+        commandsRegist(target, propertyKey, {
             type: 'number',
             value: {
                 defaultValue,

@@ -1,6 +1,6 @@
 import { LOW_PRORITY } from '../../config';
 import { ModelKey } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 重命名属性
@@ -8,9 +8,8 @@ import { useModelKeys } from '../../utils';
  * @param keys 执行键
  */
 export function Rename(name: string, keys?: ModelKey | ModelKey[]): PropertyDecorator {
-    return (target, propertyKey) => {
-        target[propertyKey] = target[propertyKey] || [];
-        target[propertyKey].push({
+    return function (target, propertyKey) {
+        commandsRegist(target, propertyKey, {
             type: 'rename',
             value: name,
             modelKeys: useModelKeys(keys),

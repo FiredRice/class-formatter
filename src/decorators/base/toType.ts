@@ -1,13 +1,13 @@
 import { HIGH_PRORITY } from '../../config';
 import { ObjectConfig, Type } from '../../types';
-import { useModelKeys } from '../../utils';
+import { commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 转换为指定类型，默认 {}
  * @param value 配置项
  */
 export function toType<T = any>(value?: ObjectConfig<T> | Type<T>): PropertyDecorator {
-    return (target, propertyKey) => {
+    return function (target, propertyKey) {
         let defaultValue = {};
         let ClassType;
         let keys;
@@ -18,9 +18,7 @@ export function toType<T = any>(value?: ObjectConfig<T> | Type<T>): PropertyDeco
             ClassType = value.ClassType;
             keys = value.keys;
         }
-
-        target[propertyKey] = target[propertyKey] || [];
-        target[propertyKey].push({
+        commandsRegist(target, propertyKey, {
             type: 'object',
             value: {
                 defaultValue,
