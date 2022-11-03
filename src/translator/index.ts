@@ -1,5 +1,5 @@
 import { subTransform } from '../utils';
-import { Type, MergeOptions, NotMergeOptions, NotMergeArrOptions, MergeArrOptions } from '../types';
+import { Type, MergeOptions, NotMergeOptions } from '../types';
 import { __CLASS_FORMATTER_LEVEL__ } from '../config';
 
 /**
@@ -9,8 +9,8 @@ import { __CLASS_FORMATTER_LEVEL__ } from '../config';
  * @param options 额外配置项
  * @returns 转换结果
  */
-export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: NotMergeOptions): Required<T>;
-export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: MergeOptions): K & Required<T>;
+export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: Omit<NotMergeOptions, 'map'>): Required<T>;
+export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: Omit<MergeOptions, 'map'>): K & Required<T>;
 export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options = {}) {
     const transTargetMap = new Map();
     transTargetMap.set(values, true);
@@ -28,8 +28,8 @@ export function executeTransform<T, K extends object>(ClassType: Type<T>, values
  * @param options 额外配置项
  * @returns 转换结果
  */
-export function executeTransArray<T, K extends object>(ClassType: Type<T>, values: K[], options?: NotMergeArrOptions<Partial<T>>): Required<T>[];
-export function executeTransArray<T, K extends object>(ClassType: Type<T>, values: K[], options?: MergeArrOptions<Partial<T>>): (K & Required<T>)[];
+export function executeTransArray<T, K extends object>(ClassType: Type<T>, values: K[], options?: NotMergeOptions<Partial<T>>): Required<T>[];
+export function executeTransArray<T, K extends object>(ClassType: Type<T>, values: K[], options?: MergeOptions<Partial<T>>): (K & Required<T>)[];
 export function executeTransArray<T, K extends object>(ClassType: Type<T>, values: K[], options?: any) {
     const { map, ...otherOptions } = options || {};
     const { length } = values;
