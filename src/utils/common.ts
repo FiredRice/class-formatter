@@ -57,10 +57,5 @@ export function commandsRegist(target, propertyKey, command: Command) {
     let commands = classCommandMap.get(target) || {};
     commands[propertyKey] = commands[propertyKey] || [];
     commands[propertyKey].push(command);
-    // 继承父类装饰器
-    if (classCommandMap.has(target.__proto__)) {
-        const parent = cloneCommands(classCommandMap.get(target.__proto__)!);
-        commands = Object.assign({}, parent, commands);
-    }
     classCommandMap.set(target, commands);
 }

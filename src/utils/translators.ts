@@ -1,13 +1,18 @@
 import isArray from 'lodash/isArray';
 import isBoolean from 'lodash/isBoolean';
-import isNumber from 'lodash/isNumber';
+import _isNumber from 'lodash/isNumber';
 import isObject from 'lodash/isObject';
 import isString from 'lodash/isString';
 import isSymbol from 'lodash/isSymbol';
 import isRegExp from 'lodash/isRegExp';
+import isNaN from 'lodash/isNaN';
 import { classCommandMap, __CLASS_FORMATTER_LEVEL__ } from '../config';
-import { Commands, FormatOptions, ModelKey, TranSwitchConfig } from '../types';
+import { Commands, FormatOptions, ModelKey } from '../types';
 import { getOwnKeys } from './common';
+
+function isNumber(value?: any): value is number {
+    return _isNumber(value) && !isNaN(value);
+}
 
 /**
  * 数字校验
@@ -19,19 +24,16 @@ import { getOwnKeys } from './common';
  * @returns 转换结果
  */
 function transNumber(target, options: any, modalDefault): number {
+    if (isNumber(target)) return target;
     const { defaultValue, autoTrans } = options;
     const _defaultValue = modalDefault ?? defaultValue;
-    if (!isNumber(target)) {
-        const isDefaultNumber = isNumber(_defaultValue);
-        if (autoTrans && isString(target)) {
-            const result = parseFloat(target);
-            return isNaN(result) ? (isDefaultNumber ? _defaultValue : 0) : result;
-        } else {
-            return isDefaultNumber ? _defaultValue : 0;
-        }
-    } else {
-        return target;
+    const isDefaultNumber = isNumber(_defaultValue);
+    const _defaultResult = isDefaultNumber ? _defaultValue : 0;
+    if (autoTrans && isString(target)) {
+        const result = Number(target);
+        return isNaN(result) ? _defaultResult : result;
     }
+    return _defaultResult;
 }
 
 /**
@@ -44,17 +46,11 @@ function transNumber(target, options: any, modalDefault): number {
  * @returns 转换结果
  */
 function transString(target, options: any, modalDefault): string {
+    if (isString(target)) return target;
     const { defaultValue, autoTrans } = options;
+    if (autoTrans && isNumber(target)) return String(target);
     const _defaultValue = modalDefault ?? defaultValue;
-    if (!isString(target)) {
-        if (autoTrans && isNumber(target) && !isNaN(target)) {
-            return String(target);
-        } else {
-            return isString(_defaultValue) ? _defaultValue : '';
-        }
-    } else {
-        return target;
-    }
+    return isString(_defaultValue) ? _defaultValue : '';
 }
 
 /**
@@ -65,12 +61,9 @@ function transString(target, options: any, modalDefault): string {
  * @returns 转换结果
  */
 function transBoolean(target, defaultValue: boolean, modalDefault): boolean {
+    if (isBoolean(target)) return target;
     const _defaultValue = modalDefault ?? defaultValue;
-    if (!isBoolean(target)) {
-        return isBoolean(_defaultValue) ? _defaultValue : false;
-    } else {
-        return target;
-    }
+    return isBoolean(_defaultValue) ? _defaultValue : false;
 }
 
 /**
@@ -81,11 +74,9 @@ function transBoolean(target, defaultValue: boolean, modalDefault): boolean {
  * @returns 转换结果
  */
 function transSymbol(target, defaultValue: symbol, modalDefault): symbol {
+    if (isSymbol(target)) return target;
     const _defaultValue = modalDefault ?? defaultValue;
-    if (!isSymbol(target)) {
-        return isSymbol(_defaultValue) ? _defaultValue : Symbol();
-    }
-    return target;
+    return isSymbol(_defaultValue) ? _defaultValue : Symbol();
 }
 
 /**
@@ -211,79 +202,11 @@ function getEffectCommands(commands: Commands, modelKey?: ModelKey) {
                 result.push(element);
             }
         }
-        !!result.length && result.sort((a, b) => b.priority - a.priority);
+        // 指令逆序执行，因此排序时应降序
+        (result.length > 1) && result.sort((a, b) => b.priority - a.priority);
     }
     return result;
 }
-
-/**
- * 转换匹配
- * @param result 结果集
- * @param executePlan 指令集
- * @param config 配置项
- */
-function transSwitch(result, executePlan, config: TranSwitchConfig) {
-    const { keys, values, initResults, transTargetMap, options, removeCommands } = config;
-    const { key: modelKey, shareValue } = options || {};
-
-    for (let i = keys.length - 1; i >= 0; i--) {
-        const key = keys[i];
-        // 当前属性值
-        const element = values[key];
-        // 执行命令数组
-        const execute: Commands = executePlan[key] || [];
-        // 过滤出本次格式化需要执行的指令
-        const filterExecutes = getEffectCommands(execute, modelKey);
-        // 模板默认值
-        const modalDefault = initResults[key];
-        for (let i = filterExecutes.length - 1; i >= 0; i--) {
-            const { type, value } = filterExecutes[i];
-            switch (type) {
-                case 'number':
-                    result[key] = transNumber(element, value, modalDefault);
-                    break;
-                case 'string':
-                    result[key] = transString(element, value, modalDefault);
-                    break;
-                case 'boolean':
-                    result[key] = transBoolean(element, value, modalDefault);
-                    break;
-                case 'object':
-                    result[key] = transObject(element, value, transTargetMap, modalDefault, options);
-                    break;
-                case 'array':
-                    result[key] = transArray(element, value, transTargetMap, modalDefault, options);
-                    break;
-                case 'symbol':
-                    result[key] = transSymbol(element, value, modalDefault);
-                    break;
-                case 'reg_exp':
-                    result[key] = transRegExp(element, value, modalDefault);
-                    break;
-                case 'extend_method':
-                    Object.defineProperty(result, key, value);
-                    break;
-                case 'remove':
-                    Reflect.deleteProperty(result, key);
-                    break;
-                case 'format':
-                    result[key] = value(result[key] ?? element, values, shareValue);
-                    break;
-                case 'custom':
-                    result[key] = transCustom(values, shareValue, value.callback, value.args);
-                    break;
-                case 'rename':
-                    result[value] = result[key];
-                    Reflect.deleteProperty(result, key);
-                    break;
-                default:
-                    break;
-            }
-        }
-        removeCommands && Reflect.deleteProperty(executePlan, key);
-    }
-}
-
 
 /**
  * 转换函数
@@ -294,43 +217,76 @@ function transSwitch(result, executePlan, config: TranSwitchConfig) {
  * @returns 转换结果
  */
 export function subTransform(model, values, transTargetMap, options: FormatOptions) {
-    const { mergeSource = false } = options || {};
+    const { key: modelKey, shareValue, mergeSource = false } = options || {};
 
     // 结果集
     const result: any = {};
 
     // 转换指令集
-    const executePlan = { ...classCommandMap.get(model.__proto__) };
+    const executePlan = classCommandMap.get(Object.getPrototypeOf(model)) || {};
 
-    // 模板默认值
-    const initResults: any = {};
-    const modelKeys = getOwnKeys(model);
-    for (let i = modelKeys.length - 1; i >= 0; i--) {
-        const key = modelKeys[i];
-        initResults[key] = model[key];
+    // 执行指令
+    const commandKeys = getOwnKeys(executePlan);
+
+    for (let i = commandKeys.length - 1; i >= 0; i--) {
+        const key = commandKeys[i];
+        // 当前属性值
+        const element = values[key];
+        // 过滤出本次格式化需要执行的指令
+        const filterExecutes = getEffectCommands(executePlan[key] || [], modelKey);
+        const { length } = filterExecutes;
+        if (length) {
+            // 模板默认值
+            const modalDefault = Object.prototype.hasOwnProperty.call(model, key) ? model[key] : undefined;
+            for (let i = filterExecutes.length - 1; i >= 0; i--) {
+                const { type, value } = filterExecutes[i];
+                switch (type) {
+                    case 'number':
+                        result[key] = transNumber(element, value, modalDefault);
+                        break;
+                    case 'string':
+                        result[key] = transString(element, value, modalDefault);
+                        break;
+                    case 'boolean':
+                        result[key] = transBoolean(element, value, modalDefault);
+                        break;
+                    case 'object':
+                        result[key] = transObject(element, value, transTargetMap, modalDefault, options);
+                        break;
+                    case 'array':
+                        result[key] = transArray(element, value, transTargetMap, modalDefault, options);
+                        break;
+                    case 'symbol':
+                        result[key] = transSymbol(element, value, modalDefault);
+                        break;
+                    case 'reg_exp':
+                        result[key] = transRegExp(element, value, modalDefault);
+                        break;
+                    case 'extend_method':
+                        Object.defineProperty(result, key, value);
+                        break;
+                    case 'keep':
+                        result[key] = element;
+                        break;
+                    case 'remove':
+                        Reflect.deleteProperty(result, key);
+                        break;
+                    case 'format':
+                        result[key] = value(result[key] ?? element, values, shareValue);
+                        break;
+                    case 'custom':
+                        result[key] = transCustom(values, shareValue, value.callback, value.args);
+                        break;
+                    case 'rename':
+                        result[value] = result[key];
+                        Reflect.deleteProperty(result, key);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
     }
-
-    // 对源数据进行格式化
-    const valuesKeys = getOwnKeys(values);
-    transSwitch(result, executePlan, {
-        keys: valuesKeys,
-        values,
-        initResults,
-        transTargetMap,
-        options,
-        removeCommands: true
-    });
-
-    // 剩余指令执行
-    const lastCommandKeys = getOwnKeys(executePlan);
-    transSwitch(result, executePlan, {
-        keys: lastCommandKeys,
-        values,
-        initResults,
-        transTargetMap,
-        options,
-        removeCommands: false
-    });
 
     if (mergeSource) {
         return {

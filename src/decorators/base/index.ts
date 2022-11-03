@@ -5,3 +5,4 @@ export * from './toType';
 export * from './toString';
 export * from './toSymbol';
 export * from './toRegExp';
+export * from './toKeep';

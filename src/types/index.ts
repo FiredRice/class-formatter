@@ -47,7 +47,7 @@ export type Callback<T = any> = (values: Readonly<T>, shareValue: any, ...args) 
 export type ModelKey = string | number;
 
 
-interface BaseOptions {
+interface BaseOptions<T = any> {
     /**
      * 执行键
      */
@@ -62,30 +62,25 @@ interface BaseOptions {
      * @default 50
      */
     deep?: number;
+    /**
+     * 遍历数组
+     */
+    map?: ArrMap<T>;
 }
 
-export interface MergeOptions extends BaseOptions {
+export interface MergeOptions<T = any> extends BaseOptions<T> {
     /**
      * 是否合并源数据 
      */
     mergeSource: true;
 };
 
-export interface NotMergeOptions extends BaseOptions {
+export interface NotMergeOptions<T = any> extends BaseOptions<T> {
     /**
      * 是否合并源数据
      */
     mergeSource?: false;
 };
-
-export interface NotMergeArrOptions<T> extends NotMergeOptions {
-    map?: ArrMap<T>;
-}
-
-export interface MergeArrOptions<T> extends MergeOptions {
-    map?: ArrMap<T>;
-}
-
 
 export type FormatOptions = MergeOptions | NotMergeOptions;
 
@@ -102,6 +97,7 @@ export type CommandType =
     | 'symbol'
     | 'array'
     | 'object'
+    | 'keep'
     | 'reg_exp'
     | 'extend_method'
     | 'remove'
@@ -123,12 +119,3 @@ export interface CommandMap {
 }
 
 export type DecoratorFun = (target: any, propertyKey: string) => void;
-
-export type TranSwitchConfig = {
-    keys: (string | symbol)[];
-    values: any;
-    initResults: any;
-    transTargetMap: Map<any, any>;
-    options: FormatOptions;
-    removeCommands: boolean;
-};

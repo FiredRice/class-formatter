@@ -1,24 +1,29 @@
 import { classCommandMap, HIGH_PRORITY } from '../../config';
-import { commandsRegist } from '../../utils';
+import { ModelKey, Type } from '../../types';
+import { cloneCommands, commandsRegist, useModelKeys } from '../../utils';
 
 /**
  * 继承方法
  */
-export function ExtendMethod(): MethodDecorator {
+export function ExtendMethod(keys?: ModelKey | ModelKey[]): MethodDecorator {
     return function (target, propertyKey, descriptor) {
-        const command: any = {
+        commandsRegist(target, propertyKey, {
             type: 'extend_method',
             value: descriptor,
-            modelKeys: [],
+            modelKeys: useModelKeys(keys),
             priority: HIGH_PRORITY
-        }
-        commandsRegist(target, propertyKey, command)
-        const commands = classCommandMap.get(target) || {};
-        commands[propertyKey] = commands[propertyKey] || [];
-        if (commands[propertyKey].length > 1) {
-            // 方法继承只能存在一个
-            commands[propertyKey] = [command];
-            classCommandMap.set(target, commands);
-        }
+        });
+    };
+}
+
+/**
+ * 继承父类装饰器
+ * @param parent 父类
+ */
+export function Extend(parent: Type): ClassDecorator {
+    return function (constructor) {
+        const parentProto = parent.prototype;
+        const parentCommands = classCommandMap.has(parentProto) ? cloneCommands(classCommandMap.get(parentProto)!) : {};
+        classCommandMap.set(constructor.prototype, Object.assign({}, parentCommands, classCommandMap.get(constructor.prototype) || {}));
     };
 }
