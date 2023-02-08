@@ -1,3 +1,5 @@
+[![Security Status](https://www.murphysec.com/platform3/v3/badge/1610326320010002435.svg?t=1)](https://www.murphysec.com/accept?code=8eeeee9b82d34e9330cdd095479394e8&type=1&from=2&t=2)
+
 # class-formatter 使用文档
 
 ## 目录
