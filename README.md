@@ -1,4 +1,4 @@
-<a href="https://www.murphysec.com/accept?code=8eeeee9b82d34e9330cdd095479394e8&type=1&from=2&t=2" target="_blank"><img src="https://www.murphysec.com/platform3/v3/badge/1610326320010002435.svg" alt="Security Status" /></a>
+<a href="https://www.murphysec.com/accept?code=8eeeee9b82d34e9330cdd095479394e8&type=1&from=2&t=2" target="_blank"><img src="https://www.murphysec.com/platform3/v3/badge/1610326320010002435.svg?t=1" alt="Security Status" /></a>
 
 
 # class-formatter 使用文档
@@ -340,6 +340,50 @@ const formatUser = executeTransform(User, user, {
 上述示例中：
 - `toNumber` 指令会无条件执行。
 - 若 `executeTransform` 中传入的 `key` 为 `'submit'`，则 `toString` 指令会被执行，否则将忽略 `name` 属性。
+
+由于执行键的存在，我们可以方便的在同一个模板上定制多套格式化方法。当一个属性拥有多个装饰器时，模板的可读性下降，且难以迭代。如下：
+
+```ts
+class User {
+    @toString()
+    @toString({ defaultValue: '张三', keys: '1' })
+    @toString({ defaultValue: '李四', keys: '2' })
+    @toString({ defaultValue: '王五', keys: '3' })
+    name!: string;
+
+    @toNumber()
+    age!: number;
+}
+```
+
+class-formatter 提供了 `createBatchDecorators` 方法用于对多装饰器进行管理。
+
+**createBatchDecorators**
+|属性|说明|类型|
+|---|---|---|
+|...decorators|需要统一管理的装饰器|PropertyDecorator[]|
+
+通过 `createBatchDecorators` 方法，我们可以对上述案例进行管理：
+
+```ts
+
+const NameManage = createBatchDecorators(
+    toString({ defaultValue: '张三', keys: '1' }),
+    toString({ defaultValue: '李四', keys: '2' }),
+    toString({ defaultValue: '王五', keys: '3' })
+);
+
+class User {
+    @toString()
+    @NameManage()
+    name!: string;
+
+    @toNumber()
+    age!: number;
+}
+```
+
+如上将所有拥有执行键的装饰器封装成 `NameManage` 装饰器，`toString` 作为默认格式化指令，`NameManage` 则根据执行键分发指令。
 
 ## 关于优先级
 目前 class-formatter 内置了 5 个执行优先级，每个属性可拥有多个指令，根据优先级的不同决定指令的执行顺序。
