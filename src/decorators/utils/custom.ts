@@ -23,3 +23,18 @@ export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: Mod
         };
     };
 }
+
+/**
+ * 批量管理属性装饰器
+ * @returns () => PropertyDecorator
+ */
+export function createBatchDecorators(...decorators: PropertyDecorator[]) {
+    return function (): PropertyDecorator {
+        return function (target, propertyKey) {
+            const { length } = decorators;
+            for (let i = 0; i < length; i++) {
+                decorators[i](target, propertyKey);
+            }
+        };
+    };
+}

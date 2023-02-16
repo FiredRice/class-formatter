@@ -18,7 +18,6 @@
             ],
             "sourceMaps": false,
             "cwd": "${workspaceRoot}",
-            "protocol": "inspector",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
