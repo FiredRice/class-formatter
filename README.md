@@ -314,9 +314,7 @@ class User {
 `executeTransform` 的 `options` 属性中提供了 `key` 属性，以下称为 `rootKey` 。
 在所有指令中均提供了 `keys` 属性的入口，以下称为 `propertyKeys` 。
 * 若 `rootKey` 不存在，则会执行所有不存在 `propertyKeys` 的指令。
-<br>
 * 若 `rootKey` 与 `propertyKeys` 同时存在，仅有 `propertyKeys` 包含 `rootKey` 的指令会被执行。
-<br>
 * 不存在 `propertyKeys` 的指令会被无条件执行。
 
 ```ts
