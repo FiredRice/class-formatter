@@ -50,5 +50,8 @@
 	"files": [
 		"lib",
 		"LICENSE"
-	]
+	],
+	"engines": {
+        "typescript": "<5.x"
+    }
 }
