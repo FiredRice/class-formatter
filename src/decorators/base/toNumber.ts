@@ -15,7 +15,7 @@ export function toNumber(value: NumberConfig | number = 0): PropertyDecorator {
             defaultValue = value;
         } else {
             defaultValue = value.defaultValue || 0;
-            autoTrans = value.autoTrans || true;
+            autoTrans = value.autoTrans ?? true;
             keys = value.keys;
         }
         commandsRegist(target, propertyKey, {
