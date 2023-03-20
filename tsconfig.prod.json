@@ -9,6 +9,6 @@
 		"lib",
 		"bin",
 		"node_modules",
-		"**/*.spec.ts"
+		"test",
 	]
 }
