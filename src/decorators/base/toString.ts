@@ -15,7 +15,7 @@ export function toString(value: StringConfig | string = ''): PropertyDecorator {
             defaultValue = value;
         } else {
             defaultValue = value.defaultValue || '';
-            autoTrans = value.autoTrans || true;
+            autoTrans = value.autoTrans ?? true;
             keys = value.keys;
         }
         commandsRegist(target, propertyKey, {

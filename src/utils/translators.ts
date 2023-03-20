@@ -6,6 +6,7 @@ import isString from 'lodash/isString';
 import isSymbol from 'lodash/isSymbol';
 import isRegExp from 'lodash/isRegExp';
 import isNaN from 'lodash/isNaN';
+import isFunction from 'lodash/isFunction';
 import { classCommandMap, __CLASS_FORMATTER_LEVEL__ } from '../config';
 import { Commands, FormatOptions, ModelKey } from '../types';
 import { getOwnKeys } from './common';
@@ -157,7 +158,7 @@ function transArray(target, options, transTargetMap, modalDefault, transOptions?
 function transObject(target, options, transTargetMap, modalDefault, transOptions?: any): any {
     const { defaultValue, ClassType } = options;
     const { deep = 50 } = transOptions || {};
-    const isObj = isObject(target) && !isArray(target);
+    const isObj = isObject(target) && !isArray(target) && !isRegExp(target) && !isFunction(target);
     const currentLevel = transTargetMap.get(__CLASS_FORMATTER_LEVEL__) || 1;
     if (currentLevel > deep) {
         if (isObj) return target;
@@ -278,7 +279,7 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
                         result[key] = transCustom(values, shareValue, value.callback, value.args);
                         break;
                     case 'rename':
-                        result[value] = result[key];
+                        result[value] = Object.prototype.hasOwnProperty.call(result, key) ? result[key] : values[key];
                         Reflect.deleteProperty(result, key);
                         break;
                     default:
