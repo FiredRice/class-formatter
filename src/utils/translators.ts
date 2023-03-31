@@ -221,7 +221,7 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
     const { key: modelKey, shareValue, mergeSource = false } = options || {};
 
     // 结果集
-    const result: any = {};
+    const result: any = mergeSource ? { ...values } : {};
 
     // 转换指令集
     const executePlan = classCommandMap.get(Object.getPrototypeOf(model)) || {};
@@ -289,11 +289,5 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
         }
     }
 
-    if (mergeSource) {
-        return {
-            ...values,
-            ...result
-        };
-    }
     return result;
 }
