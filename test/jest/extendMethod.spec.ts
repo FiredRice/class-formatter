@@ -48,6 +48,9 @@ describe('【ExtendMethod】装饰器测试', () => {
         test(`Function 属性`, () => {
             expect(executeTransform(Test, { value: () => { } }).getValue()).toBe(0);
         });
+        test(`合并源数据`, () => {
+            expect(executeTransform(Test, { value: 5 }, { mergeSource: true }).getValue()).toBe(5);
+        });
     });
 
     describe('访问器测试1', () => {
