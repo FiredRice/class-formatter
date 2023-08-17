@@ -1,9 +1,10 @@
 import { isRegExp } from 'lodash';
-import { toRegExp, executeTransform } from '../../src';
+import { toRegExp, executeTransform, TransModel } from '../../src';
 
 describe('【toRegExp】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toRegExp()
             value!: RegExp;
@@ -48,6 +49,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toRegExp()
             value: RegExp = /123/;
@@ -92,6 +94,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toRegExp(/123/)
             value!: RegExp;
@@ -136,6 +139,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试2', () => {
+        @TransModel
         class Test {
             @toRegExp({ defaultValue: /123/ })
             value!: RegExp;
@@ -180,6 +184,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试3', () => {
+        @TransModel
         class Test {
             @toRegExp('123')
             value!: RegExp;
@@ -224,6 +229,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试4', () => {
+        @TransModel
         class Test {
             @toRegExp({ defaultValue: '123' })
             value!: RegExp;
@@ -268,6 +274,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级1', () => {
+        @TransModel
         class Test {
             @toRegExp({ defaultValue: /456/ })
             value: RegExp = /123/;
@@ -312,6 +319,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级2', () => {
+        @TransModel
         class Test {
             @toRegExp(/456/)
             value: RegExp = /123/;
@@ -356,6 +364,7 @@ describe('【toRegExp】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级3', () => {
+        @TransModel
         class Test {
             @toRegExp('456')
             value: RegExp = /123/;

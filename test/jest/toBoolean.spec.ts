@@ -1,7 +1,8 @@
-import { toBoolean, executeTransform } from '../../src';
+import { toBoolean, executeTransform, TransModel } from '../../src';
 
 describe('【toBoolean】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toBoolean()
             bool!: boolean;
@@ -46,6 +47,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toBoolean()
             bool: boolean = true;
@@ -90,6 +92,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toBoolean(true)
             bool!: boolean;
@@ -134,6 +137,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试2', () => {
+        @TransModel
         class Test {
             @toBoolean({ defaultValue: true })
             bool!: boolean;
@@ -178,6 +182,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级1', () => {
+        @TransModel
         class Test {
             @toBoolean({ defaultValue: false })
             bool: boolean = true;
@@ -222,6 +227,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级2', () => {
+        @TransModel
         class Test {
             @toBoolean(false)
             bool: boolean = true;
@@ -266,6 +272,7 @@ describe('【toBoolean】装饰器测试', () => {
     });
 
     describe('装饰器执行键测试', () => {
+        @TransModel
         class Test {
             @toBoolean({ keys: '1' })
             key1!: number;

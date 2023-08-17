@@ -1,7 +1,8 @@
-import { toString, executeTransform } from '../../src';
+import { toString, executeTransform, TransModel } from '../../src';
 
 describe('【executeTransform】测试', () => {
     describe('合并源', () => {
+        @TransModel
         class Test {
             @toString()
             value!: string;

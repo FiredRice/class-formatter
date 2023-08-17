@@ -1,7 +1,8 @@
-import { toString, executeTransArray, toNumber } from '../../src';
+import { toString, executeTransArray, toNumber, TransModel } from '../../src';
 
 describe('【executeTransArray】测试', () => {
     describe('合并源1', () => {
+        @TransModel
         class Test {
             @toString()
             value!: string;
@@ -49,6 +50,7 @@ describe('【executeTransArray】测试', () => {
     });
 
     describe('合并源2', () => {
+        @TransModel
         class Test {
             @toString()
             value!: string;
@@ -162,6 +164,7 @@ describe('【executeTransArray】测试', () => {
     });
 
     describe('map', () => {
+        @TransModel
         class Test {
             @toNumber()
             value!: number;

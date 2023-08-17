@@ -1,7 +1,8 @@
-import { toArray, executeTransform, toString } from '../../src';
+import { toArray, executeTransform, toString, TransModel } from '../../src';
 
 describe('【toArray】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toArray()
             arr!: any[];
@@ -46,6 +47,7 @@ describe('【toArray】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toArray()
             arr: any[] = [1, 2];
@@ -90,6 +92,7 @@ describe('【toArray】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toArray({ defaultValue: [1, 2] })
             arr!: any[];
@@ -134,6 +137,7 @@ describe('【toArray】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级', () => {
+        @TransModel
         class Test {
             @toArray({ defaultValue: [1, 2, 3] })
             arr: any[] = [1, 2];
@@ -178,6 +182,7 @@ describe('【toArray】装饰器测试', () => {
     });
 
     describe('装饰器执行键测试', () => {
+        @TransModel
         class Test {
             @toArray({ keys: '1' })
             key1!: number;
@@ -543,10 +548,12 @@ describe('【toArray】装饰器测试', () => {
     describe('类型转换测试', () => {
 
         describe('单层转换', () => {
+            @TransModel
             class Target {
                 @toString()
                 key!: string;
             }
+            @TransModel
             class Test {
                 @toArray(Target)
                 arr!: Target[];
@@ -588,15 +595,18 @@ describe('【toArray】装饰器测试', () => {
         });
 
         describe('多层转换', () => {
+            @TransModel
             class Target2 {
                 @toString()
                 key!: string;
             }
+            @TransModel
             class Target1 {
                 @toArray({ ClassType: Target2, defaultValue: [{}] })
                 arr!: Target2[];
             }
 
+            @TransModel
             class Test {
                 @toArray(Target1)
                 arr!: Target1[];
@@ -640,6 +650,7 @@ describe('【toArray】装饰器测试', () => {
         });
 
         describe('模板自循环', () => {
+            @TransModel
             class Test {
                 @toArray({ ClassType: Test, defaultValue: [{}] })
                 arr!: Test[];
@@ -683,6 +694,7 @@ describe('【toArray】装饰器测试', () => {
     });
 
     describe('map', () => {
+        @TransModel
         class Test {
             @toArray({ map: (item, index) => (index + 1) as any })
             arr!: any[];

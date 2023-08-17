@@ -1,8 +1,9 @@
-import { toKeep, executeTransform } from '../../src';
+import { toKeep, executeTransform, TransModel } from '../../src';
 
 describe('【toKeep】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toKeep()
             value!: any;
@@ -49,6 +50,7 @@ describe('【toKeep】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toKeep()
             value: RegExp = /123/;

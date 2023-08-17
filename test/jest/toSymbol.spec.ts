@@ -1,9 +1,10 @@
 import { isSymbol } from 'lodash';
-import { toSymbol, executeTransform } from '../../src';
+import { toSymbol, executeTransform, TransModel } from '../../src';
 
 describe('【toSymbol】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toSymbol()
             value!: symbol;
@@ -50,6 +51,7 @@ describe('【toSymbol】装饰器测试', () => {
     
     describe('模板默认值测试', () => {
         const value = Symbol();
+        @TransModel
         class Test {
             @toSymbol()
             value: symbol = value;
@@ -96,6 +98,7 @@ describe('【toSymbol】装饰器测试', () => {
 
     describe('装饰器默认值测试1', () => {
         const value = Symbol();
+        @TransModel
         class Test {
             @toSymbol(value)
             value!: symbol;
@@ -142,6 +145,7 @@ describe('【toSymbol】装饰器测试', () => {
 
     describe('装饰器默认值测试2', () => {
         const value = Symbol();
+        @TransModel
         class Test {
             @toSymbol({ defaultValue: value })
             value!: symbol;
@@ -188,6 +192,7 @@ describe('【toSymbol】装饰器测试', () => {
 
     describe('装饰器默认值优先级1', () => {
         const value = Symbol();
+        @TransModel
         class Test {
             @toSymbol({ defaultValue: Symbol() })
             value: symbol = value;
@@ -234,6 +239,7 @@ describe('【toSymbol】装饰器测试', () => {
 
     describe('装饰器默认值优先级2', () => {
         const value = Symbol();
+        @TransModel
         class Test {
             @toSymbol(Symbol())
             value: symbol = value;

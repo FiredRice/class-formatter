@@ -1,7 +1,8 @@
-import { Rename, executeTransform, toNumber, Format } from '../../src';
+import { TransModel, Rename, executeTransform, toNumber, Format } from '../../src';
 
 describe('【Rename】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @Rename('value2')
             value!: number;
@@ -48,6 +49,7 @@ describe('【Rename】装饰器测试', () => {
     });
 
     describe('组合测试1', () => {
+        @TransModel
         class Test {
             @toNumber()
             @Format(value => value + 1)
@@ -94,6 +96,7 @@ describe('【Rename】装饰器测试', () => {
     });
 
     describe('组合测试2', () => {
+        @TransModel
         class Test {
             @toNumber()
             @Format(value => undefined)

@@ -6,3 +6,4 @@ export * from './toString';
 export * from './toSymbol';
 export * from './toRegExp';
 export * from './toKeep';
+export * from './transModel';

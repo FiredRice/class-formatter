@@ -1,7 +1,8 @@
-import { toType, executeTransform, toString } from '../../src';
+import { toType, executeTransform, toString, TransModel } from '../../src';
 
 describe('【toType】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toType()
             value!: any;
@@ -46,6 +47,7 @@ describe('【toType】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toType()
             value: any = { key: '1' };
@@ -90,6 +92,7 @@ describe('【toType】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toType({ defaultValue: { key: '1' } })
             value!: any;
@@ -135,6 +138,7 @@ describe('【toType】装饰器测试', () => {
 
 
     describe('装饰器默认值优先级', () => {
+        @TransModel
         class Test {
             @toType({ defaultValue: { key: '2' } })
             value: any = { key: '1' };
@@ -182,10 +186,12 @@ describe('【toType】装饰器测试', () => {
     describe('类型转换测试', () => {
 
         describe('单层转换', () => {
+            @TransModel
             class Target {
                 @toString()
                 key!: string;
             }
+            @TransModel
             class Test {
                 @toType(Target)
                 value!: Target;
@@ -211,15 +217,18 @@ describe('【toType】装饰器测试', () => {
         });
 
         describe('多层转换', () => {
+            @TransModel
             class Target2 {
                 @toString()
                 key!: string;
             }
+            @TransModel
             class Target1 {
                 @toType({ ClassType: Target2, defaultValue: {} })
                 value!: Target2;
             }
 
+            @TransModel
             class Test {
                 @toType(Target1)
                 value!: Target1;
@@ -251,6 +260,7 @@ describe('【toType】装饰器测试', () => {
         });
 
         describe('模板自循环', () => {
+            @TransModel
             class Test {
                 @toType({ ClassType: Test })
                 value!: Test;

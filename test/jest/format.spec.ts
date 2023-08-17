@@ -1,9 +1,10 @@
 import { isNumber } from 'lodash';
-import { Format, executeTransform, toNumber } from '../../src';
+import { TransModel, Format, executeTransform, toNumber } from '../../src';
 
 describe('【Format】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @Format(value => (isNumber(value) ? value : 0) + 1)
             value!: number;
@@ -48,6 +49,7 @@ describe('【Format】装饰器测试', () => {
     });
 
     describe('共享数据测试', () => {
+        @TransModel
         class Test {
             @Format((value, target, shareValue) => (isNumber(value) ? value : 0) + shareValue + 1)
             value!: number;
@@ -92,6 +94,7 @@ describe('【Format】装饰器测试', () => {
     });
 
     describe('联动测试', () => {
+        @TransModel
         class Test {
             @Format((value, target) => (isNumber(value) ? value : 0) + (isNumber(target.value2) ? target.value2 : 0) + 1)
             value!: number;
@@ -136,6 +139,7 @@ describe('【Format】装饰器测试', () => {
     });
 
     describe('优先级测试', () => {
+        @TransModel
         class Test {
             @toNumber(1)
             @Format(value => value + 1)

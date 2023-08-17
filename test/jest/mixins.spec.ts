@@ -1,17 +1,21 @@
-import { Mixins, executeTransform, toNumber, toString, toBoolean, Format } from '../../src';
+import { TransModel, Mixins, executeTransform, toNumber, toString, toBoolean, Format } from '../../src';
 
 describe('【Mixins】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Parent1 {
             @toNumber()
             value!: number;
         }
+
+        @TransModel
         class Parent2 {
             @toString()
             value2!: string;
         }
 
         @Mixins(Parent1, Parent2)
+        @TransModel
         class Test implements Parent1, Parent2 {
             value!: number;
             value2!: string;
@@ -56,16 +60,19 @@ describe('【Mixins】装饰器测试', () => {
     });
 
     describe('重写测试', () => {
+        @TransModel
         class Parent1 {
             @toNumber()
             value!: unknown;
         }
+        @TransModel
         class Parent2 {
             @toString()
             value2!: string;
         }
 
         @Mixins(Parent1, Parent2)
+        @TransModel
         class Test implements Parent1, Parent2 {
             @toBoolean()
             value!: boolean;
@@ -111,16 +118,19 @@ describe('【Mixins】装饰器测试', () => {
     });
 
     describe('额外属性测试', () => {
+        @TransModel
         class Parent1 {
             @toNumber()
             value!: unknown;
         }
+        @TransModel
         class Parent2 {
             @toString()
             value2!: string;
         }
 
         @Mixins(Parent1, Parent2)
+        @TransModel
         class Test implements Parent1, Parent2 {
             @toBoolean()
             value!: boolean;

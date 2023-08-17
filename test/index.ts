@@ -1,9 +1,20 @@
-import { toString, executeTransform } from '../src';
+import { toString, executeTransform, TransModel, Mixins, toNumber, Extend } from '../src';
 
-class Test {
-    @toString()
-    name!: string;
+@TransModel
+class Parent {
+    @toNumber()
+    age!: any;
 }
 
-console.log(executeTransform(Test, {}));
+@TransModel
+@Extend(Parent)
+class Test extends Parent {
+    @toString()
+    name!: string;
 
+    @toString()
+    age: string = '58';
+}
+
+const res = executeTransform(Test, {});
+console.log(res);

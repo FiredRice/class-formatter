@@ -1,8 +1,9 @@
-import { Remove, executeTransform, toNumber, Format } from '../../src';
+import { TransModel, Remove, executeTransform, toNumber, Format } from '../../src';
 
 describe('【Remove】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @Remove()
             value!: number;
@@ -48,6 +49,7 @@ describe('【Remove】装饰器测试', () => {
 
 
     describe('优先级测试', () => {
+        @TransModel
         class Test {
             @toNumber(1)
             @Format(value => value + 1)

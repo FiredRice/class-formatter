@@ -7,9 +7,10 @@ import isSymbol from 'lodash/isSymbol';
 import isRegExp from 'lodash/isRegExp';
 import isNaN from 'lodash/isNaN';
 import isFunction from 'lodash/isFunction';
-import { classCommandMap, __CLASS_FORMATTER_LEVEL__ } from '../config';
-import { Commands, FormatOptions, ModelKey } from '../types';
+import { classCommandMap } from '../config';
+import { Commands, FormatOptions, ModelKey, Type } from '../types';
 import { getOwnKeys } from './common';
+import TransContext from '../service/context';
 
 function isNumber(value?: any): value is number {
     return _isNumber(value) && !isNaN(value);
@@ -102,18 +103,18 @@ function transRegExp(target, defaultValue, modalDefault): RegExp {
  * @param options 被校验信息
  * @param - defaultValue 默认值
  * @param - ClassType 对象类
- * @param transTargetMap 引用对象集合
+ * @param context 引用对象集合
  * @param modalDefault 模板默认值
  * @param transOptions 转换配置
  * @returns 转换结果
  */
-function transArray(target, options, transTargetMap, modalDefault, transOptions?: any): any {
+function transArray(target, options, context: TransContext, modalDefault, transOptions?: any): any {
     const { defaultValue, ClassType, map } = options;
     const { deep = 50 } = transOptions || {};
     const isArr = isArray(target);
     const _defaultValue = modalDefault ?? defaultValue;
     const _default = isArray(_defaultValue) ? (_defaultValue || []) : [];
-    const currentLevel = transTargetMap.get(__CLASS_FORMATTER_LEVEL__) || 1;
+    const currentLevel = context.getDeepLevel();
     // 超过循环深度
     // 直接返回源数据
     if (currentLevel > deep) {
@@ -121,20 +122,19 @@ function transArray(target, options, transTargetMap, modalDefault, transOptions?
         return _default;
     }
     // 若指定转换类型，则进行转换
-    if (ClassType && !transTargetMap.has(target)) {
+    if (ClassType && !context.hasRecord(target)) {
         const executeArr = isArr ? target : _default;
         const { length } = executeArr;
         if (length) {
-            isArr && transTargetMap.set(target, true);
-            transTargetMap.set(__CLASS_FORMATTER_LEVEL__, currentLevel + 1);
-            const instance: any = new ClassType();
+            isArr && context.setRecord(target);
+            context.setDeepLevel(currentLevel + 1);
             const result: any[] = [];
             for (let i = 0; i < length; i++) {
-                let element = subTransform(instance, executeArr[i], transTargetMap, transOptions);
+                let element = subTransform(ClassType, executeArr[i], context, transOptions);
                 map && (element = map(element, i, executeArr));
                 result.push(element);
             }
-            transTargetMap.set(__CLASS_FORMATTER_LEVEL__, currentLevel);
+            context.setDeepLevel(currentLevel);
             return result;
         }
         return executeArr;
@@ -150,28 +150,27 @@ function transArray(target, options, transTargetMap, modalDefault, transOptions?
  * @param options 被校验信息
  * @param - defaultValue 默认值
  * @param - ClassType 对象类
- * @param transTargetMap 引用对象集合
+ * @param context 引用对象集合
  * @param modalDefault 模板默认值
  * @param transOptions 转换配置
  * @returns 转换结果
  */
-function transObject(target, options, transTargetMap, modalDefault, transOptions?: any): any {
+function transObject(target, options, context: TransContext, modalDefault, transOptions?: any): any {
     const { defaultValue, ClassType } = options;
     const { deep = 50 } = transOptions || {};
     const isObj = isObject(target) && !isArray(target) && !isRegExp(target) && !isFunction(target);
-    const currentLevel = transTargetMap.get(__CLASS_FORMATTER_LEVEL__) || 1;
+    const currentLevel = context.getDeepLevel();
     if (currentLevel > deep) {
         if (isObj) return target;
         return {};
     }
     const _defaultValue = modalDefault ?? defaultValue;
     const _default = isObject(_defaultValue) ? (_defaultValue || {}) : {};
-    if (ClassType && !transTargetMap.has(target)) {
-        isObj && transTargetMap.set(target, true);
-        transTargetMap.set(__CLASS_FORMATTER_LEVEL__, currentLevel + 1);
-        const instance: any = new ClassType();
-        const result = subTransform(instance, isObj ? target : _default, transTargetMap, transOptions) || _default;
-        transTargetMap.set(__CLASS_FORMATTER_LEVEL__, currentLevel);
+    if (ClassType && !context.hasRecord(target)) {
+        isObj && context.setRecord(target);
+        context.setDeepLevel(currentLevel + 1);
+        const result = subTransform(ClassType, isObj ? target : _default, context, transOptions) || _default;
+        context.setDeepLevel(currentLevel);
         return result;
     }
     if (isObj) return target;
@@ -203,8 +202,6 @@ function getEffectCommands(commands: Commands, modelKey?: ModelKey) {
                 result.push(element);
             }
         }
-        // 指令逆序执行，因此排序时应降序
-        (result.length > 1) && result.sort((a, b) => b.priority - a.priority);
     }
     return result;
 }
@@ -213,18 +210,20 @@ function getEffectCommands(commands: Commands, modelKey?: ModelKey) {
  * 转换函数
  * @param ClassType 模板类型
  * @param values 源数据
- * @param transTargetMap 引用对象集合
+ * @param context 引用对象集合
  * @param options 配置项
  * @returns 转换结果
  */
-export function subTransform(model, values, transTargetMap, options: FormatOptions) {
+export function subTransform(ClassType: Type, values, context: TransContext, options: FormatOptions) {
     const { key: modelKey, shareValue, mergeSource = false } = options || {};
 
     // 结果集
     const result: any = mergeSource ? { ...values } : {};
 
+    const model = new ClassType();
+
     // 转换指令集
-    const executePlan = classCommandMap.get(Object.getPrototypeOf(model)) || {};
+    const executePlan = classCommandMap.get(ClassType) || {};
 
     // 执行指令
     const commandKeys = getOwnKeys(executePlan);
@@ -252,19 +251,16 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
                         result[key] = transBoolean(element, value, modalDefault);
                         break;
                     case 'object':
-                        result[key] = transObject(element, value, transTargetMap, modalDefault, options);
+                        result[key] = transObject(element, value, context, modalDefault, options);
                         break;
                     case 'array':
-                        result[key] = transArray(element, value, transTargetMap, modalDefault, options);
+                        result[key] = transArray(element, value, context, modalDefault, options);
                         break;
                     case 'symbol':
                         result[key] = transSymbol(element, value, modalDefault);
                         break;
                     case 'reg_exp':
                         result[key] = transRegExp(element, value, modalDefault);
-                        break;
-                    case 'extend_method':
-                        Object.defineProperty(result, key, value);
                         break;
                     case 'keep':
                         result[key] = element;
@@ -281,6 +277,10 @@ export function subTransform(model, values, transTargetMap, options: FormatOptio
                     case 'rename':
                         result[value] = Object.prototype.hasOwnProperty.call(result, key) ? result[key] : values[key];
                         Reflect.deleteProperty(result, key);
+                        break;
+                    case 'extend_method':
+                        let descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(model), key);
+                        descriptor && Object.defineProperty(result, key, descriptor);
                         break;
                     default:
                         break;
