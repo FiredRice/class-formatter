@@ -110,8 +110,8 @@ describe('【Extend】装饰器测试', () => {
             value!: any;
         }
 
-        @Extend(Parent)
         @TransModel
+        @Extend(Parent)
         class Test extends Parent {
             @toString()
             value: string = '';

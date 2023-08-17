@@ -1,33 +1,20 @@
-import { toString, executeTransform, TransModel, Mixins } from '../src';
+import { toString, executeTransform, TransModel, Mixins, toNumber, Extend } from '../src';
 
 @TransModel
-class Test {
+class Parent {
+    @toNumber()
+    age!: any;
+}
+
+@TransModel
+@Extend(Parent)
+class Test extends Parent {
     @toString()
     name!: string;
-}
 
-console.log(executeTransform(Test, {}));
-
-@TransModel
-class A {
-    @toString('A')
-    name!: string;
-}
-
-@TransModel
-class B {
-    @toString('B')
-    name!: string;
-}
-
-@Mixins(A, B)
-@TransModel
-class C implements A, B {
     @toString()
-    c!: string;
-
-    name!: string;
+    age: string = '58';
 }
 
-const res = executeTransform(C, {});
+const res = executeTransform(Test, {});
 console.log(res);
