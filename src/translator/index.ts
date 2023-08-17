@@ -1,6 +1,6 @@
 import { subTransform } from '../utils';
 import { Type, MergeOptions, NotMergeOptions } from '../types';
-import { __CLASS_FORMATTER_LEVEL__ } from '../config';
+import TransContext from '../service/context';
 
 /**
  * 执行转换对象
@@ -12,12 +12,10 @@ import { __CLASS_FORMATTER_LEVEL__ } from '../config';
 export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: Omit<NotMergeOptions, 'map'>): Required<T>;
 export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options?: Omit<MergeOptions, 'map'>): K & Required<T>;
 export function executeTransform<T, K extends object>(ClassType: Type<T>, values: K, options = {}) {
-    const transTargetMap = new Map();
-    transTargetMap.set(values, true);
-    transTargetMap.set(__CLASS_FORMATTER_LEVEL__, 1);
-    const instance: any = new ClassType();
-    const result = subTransform(instance, values, transTargetMap, options);
-    transTargetMap.clear();
+    const context = new TransContext();
+    context.init(values);
+    const result = subTransform(ClassType, values, context, options);
+    context.clear();
     return result;
 }
 
@@ -36,18 +34,16 @@ export function executeTransArray<T, K extends object>(ClassType: Type<T>, value
     if (!length) {
         return values;
     }
-    const transTargetMap = new Map();
-    transTargetMap.set(values, true);
-    transTargetMap.set(__CLASS_FORMATTER_LEVEL__, 1);
-    const instance: any = new ClassType();
+    const context = new TransContext();
+    context.init(values);
     const result: any[] = [];
     for (let i = 0; i < length; i++) {
         const element = values[i];
-        transTargetMap.set(element, true);
-        let item = subTransform(instance, element, transTargetMap, otherOptions);
+        context.setRecord(element);
+        let item = subTransform(ClassType, element, context, otherOptions);
         map && (item = map(item, i, values));
         result.push(item);
     }
-    transTargetMap.clear();
+    context.clear();
     return result;
 }

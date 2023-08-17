@@ -26,5 +26,5 @@ export default {
 		console.error(warning.message);
 	},
 	plugins: [commonjs(), nodeResolve()],
-	external: ['lodash'],
+	// external: ['lodash'],
 };

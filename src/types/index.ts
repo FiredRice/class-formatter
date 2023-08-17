@@ -99,16 +99,15 @@ export type CommandType =
     | 'object'
     | 'keep'
     | 'reg_exp'
-    | 'extend_method'
     | 'remove'
     | 'format'
     | 'custom'
-    | 'rename';
+    | 'rename'
+    | 'extend_method';
 
 export interface Command {
     type: CommandType;
     value: any;
-    priority: number;
     modelKeys: ModelKey[];
 }
 
@@ -118,4 +117,8 @@ export interface CommandMap {
     [x: string | symbol]: Commands;
 }
 
-export type DecoratorFun = (target: any, propertyKey: string) => void;
+export type Decorator = (value, context: DecoratorContext) => void;
+export type ClassDecorator = (value: Function, context: ClassDecoratorContext) => void;
+export type ClassFieldDecorator = (value: undefined, context: ClassFieldDecoratorContext) => void;
+export type ClassFieldAndMethodDecorator = (value: undefined | Function, context: ClassMethodDecoratorContext | ClassFieldDecoratorContext) => void;
+export type ClassMethodDecorator = (value: Function, context: ClassMethodDecoratorContext | ClassGetterDecoratorContext | ClassSetterDecoratorContext) => void;

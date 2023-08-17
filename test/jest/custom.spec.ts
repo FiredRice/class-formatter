@@ -1,13 +1,15 @@
 import { isNumber } from 'lodash';
-import { createFormatDecorator, executeTransform } from '../../src';
+import { createFieldDecorator, executeTransform, TransModel } from '../../src';
 
 describe('【custom】装饰器测试', () => {
 
     describe('装饰器测试', () => {
-        const toCustom = createFormatDecorator((test: Test) => {
+        const toCustom = createFieldDecorator((test: Test) => {
             const { value } = test
             return (isNumber(value) ? value : 0) + 1;
         });
+
+        @TransModel
         class Test {
             @toCustom()
             value!: number;
@@ -52,10 +54,12 @@ describe('【custom】装饰器测试', () => {
     });
 
     describe('共享值测试1', () => {
-        const toCustom = createFormatDecorator((test: Test, shareValue) => {
+        const toCustom = createFieldDecorator((test: Test, shareValue) => {
             const { value } = test
             return (isNumber(value) ? value : 0) + shareValue.value + 1;
         });
+        
+        @TransModel
         class Test {
             @toCustom()
             value!: number;
@@ -100,10 +104,12 @@ describe('【custom】装饰器测试', () => {
     })
 
     describe('共享值测试2', () => {
-        const toCustom = createFormatDecorator((test: Test, shareValue) => {
+        const toCustom = createFieldDecorator((test: Test, shareValue) => {
             const { value } = test
             return (isNumber(value) ? value : 0) + shareValue + 1;
         });
+
+        @TransModel
         class Test {
             @toCustom()
             value!: number;
@@ -148,10 +154,12 @@ describe('【custom】装饰器测试', () => {
     })
 
     describe('额外参数测试', () => {
-        const toCustom = createFormatDecorator((test: Test, shareValue, extra) => {
+        const toCustom = createFieldDecorator((test: Test, shareValue, extra) => {
             const { value } = test
             return (isNumber(value) ? value : 0) + extra + 1;
         });
+
+        @TransModel
         class Test {
             @toCustom(1)
             value!: number;

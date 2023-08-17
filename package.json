@@ -1,6 +1,6 @@
 {
 	"name": "class-formatter",
-	"version": "3.1.2",
+	"version": "5.0.0",
 	"description": "一套装饰器风格的数据格式化方法。",
 	"author": "东北炒饭",
 	"license": "MIT",
@@ -19,24 +19,23 @@
 		"clean": "rimraf node_modules",
 		"test": "jest"
 	},
-	"dependencies": {
-		"lodash": "^4.17.21"
-	},
+	"dependencies": {},
 	"devDependencies": {
 		"@rollup/plugin-commonjs": "^22.0.1",
 		"@rollup/plugin-node-resolve": "^13.3.0",
 		"@types/jest": "^29.5.0",
-		"@types/lodash": "^4.14.182",
+		"@types/lodash": "^4.14.197",
 		"@types/node": "^18.6.4",
 		"@types/shelljs": "^0.8.11",
 		"jest": "^29.5.0",
+		"lodash": "^4.17.21",
 		"rimraf": "3.0.2",
 		"rollup": "^2.77.2",
 		"rollup-plugin-terser": "^7.0.2",
 		"shelljs": "^0.8.5",
 		"ts-jest": "^29.0.5",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.7.4"
+		"typescript": "^5.1.6"
 	},
 	"publishConfig": {
 		"registry": "https://registry.npmjs.org/"
@@ -57,6 +56,6 @@
 		"LICENSE"
 	],
 	"engines": {
-		"typescript": "<5.x"
+		"typescript": ">=5.x"
 	}
 }

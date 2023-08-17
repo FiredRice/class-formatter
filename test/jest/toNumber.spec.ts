@@ -1,8 +1,9 @@
-import { toNumber, executeTransform } from '../../src';
+import { toNumber, executeTransform, TransModel } from '../../src';
 
 describe('【toNumber】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toNumber()
             age!: number;
@@ -47,6 +48,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toNumber()
             age: number = 100;
@@ -91,6 +93,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toNumber(100)
             age!: number;
@@ -135,6 +138,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试2', () => {
+        @TransModel
         class Test {
             @toNumber({ defaultValue: 100 })
             age!: number;
@@ -179,6 +183,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级1', () => {
+        @TransModel
         class Test {
             @toNumber({ defaultValue: 1000 })
             age: number = 100;
@@ -223,6 +228,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级2', () => {
+        @TransModel
         class Test {
             @toNumber(1000)
             age: number = 100;
@@ -267,6 +273,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     describe('装饰器执行键测试', () => {
+        @TransModel
         class Test {
             @toNumber({ keys: '1' })
             key1!: number;
@@ -630,6 +637,7 @@ describe('【toNumber】装饰器测试', () => {
     });
 
     test('自动转换测试', () => {
+        @TransModel
         class Test {
             @toNumber({ autoTrans: true })
             auto!: number;

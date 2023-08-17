@@ -1,6 +1,6 @@
 import isArray from 'lodash/isArray';
 import { classCommandMap } from '../config';
-import { Command, CommandMap, ModelKey, Type } from '../types';
+import { CommandMap, ModelKey, Type } from '../types';
 
 export function useModelKeys(modelKeys: ModelKey | ModelKey[] = []) {
     const result = isArray(modelKeys) ? modelKeys : [modelKeys];
@@ -14,12 +14,12 @@ export function useModelKeys(modelKeys: ModelKey | ModelKey[] = []) {
  */
 export function mixins<T extends Function>(child: T, parents: Type[]) {
     const commandList: CommandMap[] = [];
-    for (let i = parents.length - 1; i >= 0; i--) {
+    for (let i = 0; i < parents.length; i++) {
         const parent = parents[i];
-        if (classCommandMap.has(parent.prototype)) {
-            commandList.push(cloneCommands(classCommandMap.get(parent.prototype)!));
+        if (classCommandMap.has(parent)) {
+            commandList.push(cloneCommands(classCommandMap.get(parent)!));
         }
-        const keys = Object.getOwnPropertyNames(parent);
+        const keys = Object.getOwnPropertyNames(parent.prototype);
         for (let j = keys.length - 1; j >= 0; j--) {
             const name = keys[j];
             if (name !== 'constructor') {
@@ -27,7 +27,14 @@ export function mixins<T extends Function>(child: T, parents: Type[]) {
             }
         }
     }
-    classCommandMap.set(child.prototype, Object.assign({}, ...commandList, classCommandMap.get(child.prototype) || {}));
+    classCommandMap.set(
+        child,
+        Object.assign(
+            {},
+            ...commandList,
+            classCommandMap.get(child) || {}
+        )
+    );
 }
 
 /**
@@ -48,14 +55,4 @@ export function cloneCommands(command: CommandMap) {
         result[key] = [...command[key]];
     }
     return result;
-}
-
-/**
- * 注册装饰器
- */
-export function commandsRegist(target, propertyKey, command: Command) {
-    let commands = classCommandMap.get(target) || {};
-    commands[propertyKey] = commands[propertyKey] || [];
-    commands[propertyKey].push(command);
-    classCommandMap.set(target, commands);
 }

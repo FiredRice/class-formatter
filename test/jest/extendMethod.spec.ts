@@ -1,12 +1,13 @@
-import { ExtendMethod, executeTransform, toNumber } from '../../src';
+import { Extend, executeTransform, TransModel, toNumber } from '../../src';
 
 describe('【ExtendMethod】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toNumber()
             value!: number;
 
-            @ExtendMethod()
+            @Extend()
             public getValue() {
                 return this.value;
             }
@@ -54,11 +55,12 @@ describe('【ExtendMethod】装饰器测试', () => {
     });
 
     describe('访问器测试1', () => {
+        @TransModel
         class Test {
             @toNumber()
             private value!: number;
 
-            @ExtendMethod()
+            @Extend()
             public get value2() {
                 return this.value + 1;
             }
@@ -103,11 +105,12 @@ describe('【ExtendMethod】装饰器测试', () => {
     });
 
     describe('访问器测试2', () => {
+        @TransModel
         class Test {
             @toNumber()
             value!: number;
 
-            @ExtendMethod()
+            @Extend()
             public set value2(v: number) {
                 this.value = this.value + v + 1;
             }

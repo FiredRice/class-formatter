@@ -1,8 +1,9 @@
-import { toString, executeTransform } from '../../src';
+import { toString, executeTransform, TransModel } from '../../src';
 
 describe('【toString】装饰器测试', () => {
 
     describe('装饰器测试', () => {
+        @TransModel
         class Test {
             @toString()
             name!: string;
@@ -47,6 +48,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('模板默认值测试', () => {
+        @TransModel
         class Test {
             @toString()
             name: string = '张三';
@@ -91,6 +93,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试1', () => {
+        @TransModel
         class Test {
             @toString('张三')
             name!: string;
@@ -135,6 +138,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('装饰器默认值测试2', () => {
+        @TransModel
         class Test {
             @toString({ defaultValue: '张三' })
             name!: string;
@@ -179,6 +183,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级1', () => {
+        @TransModel
         class Test {
             @toString({ defaultValue: '李四' })
             name: string = '张三';
@@ -223,6 +228,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('装饰器默认值优先级2', () => {
+        @TransModel
         class Test {
             @toString('李四')
             name: string = '张三';
@@ -267,6 +273,7 @@ describe('【toString】装饰器测试', () => {
     });
 
     describe('装饰器执行键测试', () => {
+        @TransModel
         class Test {
             @toString({ keys: '1' })
             name!: string;
@@ -520,6 +527,7 @@ describe('【toString】装饰器测试', () => {
     });
     
     test('自动转换测试', () => {
+        @TransModel
         class Test {
             @toString({ autoTrans: true })
             auto!: string;

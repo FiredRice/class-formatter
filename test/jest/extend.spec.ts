@@ -1,13 +1,15 @@
-import { Extend, executeTransform, toNumber, toString } from '../../src';
+import { Extend, executeTransform, toNumber, toString, TransModel } from '../../src';
 
 describe('【Extend】装饰器测试', () => {
     describe('装饰器测试', () => {
+        @TransModel
         class Parent {
             @toNumber()
             value!: number;
         }
 
         @Extend(Parent)
+        @TransModel
         class Test extends Parent {
         }
 
@@ -50,12 +52,14 @@ describe('【Extend】装饰器测试', () => {
     });
 
     describe('装饰器测试2', () => {
+        @TransModel
         class Parent {
             @toNumber()
             value!: number;
         }
 
         @Extend(Parent)
+        @TransModel
         class Test extends Parent {
             @toString()
             value2!: string;
@@ -100,15 +104,17 @@ describe('【Extend】装饰器测试', () => {
     });
 
     describe('重写测试', () => {
+        @TransModel
         class Parent {
             @toNumber()
             value!: any;
         }
 
         @Extend(Parent)
+        @TransModel
         class Test extends Parent {
             @toString()
-            declare value: string;
+            value: string = '';
 
             @toString()
             value2!: string;
