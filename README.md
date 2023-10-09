@@ -1,6 +1,3 @@
-<a href="https://www.murphysec.com/accept?code=8eeeee9b82d34e9330cdd095479394e8&type=1&from=2&t=2" target="_blank"><img src="https://www.murphysec.com/platform3/v3/badge/1610326320010002435.svg?t=1" alt="Security Status" /></a>
-
-
 # class-formatter 使用文档
 
 ## 目录
@@ -17,8 +14,6 @@
 - [关于执行键](#关于执行键)<br>
 - [关于优先级](#关于优先级)<br>
 - [关于循环引用](#关于循环引用)<br>
-  - [多模板循间环引用](#多模板循间环引用)<br>
-  - [被转换对象存在在循环引用](#被转换对象存在在循环引用)<br>
   - [模板自循环](#模板自循环)<br>
 - [关于混入](#关于混入)<br>
 - [注意事项](#注意事项)<br>
@@ -147,7 +142,7 @@ class User {
 |toType|若属性为非对象类型，则将属性转换为对象。<br>若指定了 `Type`，则可以将类型转换为 `Type` 的类型。|(value?: [ObjectConfig](#ObjectConfig) \| Type) => [Decorator](#Decorator)|defaultValue: {}|
 |toArray|若属性为非数组类型，则将属性转换为数组。<br>若指定了 `Type`，则可以将数组内所有数据转换为 `Type` 的类型。|(value?: [ArrayConfig](#ArrayConfig) \| Type) => [Decorator](#Decorator)|defaultValue: []|
 |toKeep|保持源数据引用|keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
-|Remove|移除属性|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
+|Remove|移除属性|(value?: [RemoveConfig](#RemoveConfig) \| [RemoveCallback](#RemoveCallback) \| [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 |Format|对属性进行自定义格式化。<br>**注意：Format 会在所有内置校验结束后执行，且不限制返回值类型，使用时请格外注意**|(callback: [FormatCallback](#FormatCallback), keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 |Rename|对属性重命名。|(name: string, keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [Decorator](#Decorator)|--|
 
@@ -250,6 +245,19 @@ type FormatCallback = (item, values) => any;
 |item|属性被转换后的值|
 |values|源数据<br>**注意：values 源数据的直接引用，请勿在转换过程中对其进行修改**|
 |shareValue|共享数据<br>**注意：shareValue 为共享数据的直接引用，请勿在转换过程中对其进行修改**|
+
+**<div id='RemoveCallback'>RemoveCallback</div>**
+```ts
+type RemoveCallback = (value: any, target: Readonly<any>, shareValue?: any) => boolean;
+```
+
+**<div id='RemoveConfig'>RemoveConfig</div>**
+```ts
+type RemoveConfig = {
+    beforeRemove?: RemoveCallback;
+    keys?: ModelKey | ModelKey[];
+};
+```
 
 **<div id='Type'>Type</div>**
 ```ts
@@ -395,8 +403,8 @@ class User {
 |ExtendMethod|继承模板的方法|1|
 |toKeep|保持源数据的引用|2|
 |Format|内置的格式化指令|3|
-|Remove|移除属性|3|
 |自定义装饰器|通过 `createFormatDecorator` 创建的装饰器|4|
+|Remove|移除属性|5|
 |Rename|属性重命名|5|
 
 ## 关于循环引用

@@ -1,9 +1,9 @@
-import { toString, executeTransform } from '../src';
+import { toString, executeTransform, Remove, toNumber } from '../src';
 
 class Test {
-    @toString()
-    name!: string;
+    @Remove({ keys: 1 })
+    age!: number;
 }
 
-console.log(executeTransform(Test, {}));
-
+const res = executeTransform(Test, { age: 2, name: '张三' });
+console.log(res);

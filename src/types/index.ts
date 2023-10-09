@@ -41,6 +41,13 @@ export type RegConfig = {
     keys?: ModelKey | ModelKey[];
 };
 
+export type RemoveCallback = (value: any, target: Readonly<any>, shareValue: any) => boolean;
+
+export type RemoveConfig = {
+    beforeRemove?: RemoveCallback;
+    keys?: ModelKey | ModelKey[];
+};
+
 
 export type Callback<T = any> = (values: Readonly<T>, shareValue: any, ...args) => any;
 
