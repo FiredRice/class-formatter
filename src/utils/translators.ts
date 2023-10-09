@@ -235,7 +235,7 @@ export function subTransform(ClassType: Type, values, context: TransContext, opt
         const { length } = filterExecutes;
         if (length) {
             // 模板默认值
-            const modalDefault = Object.prototype.hasOwnProperty.call(model, key) ? model[key] : undefined;
+            const modalDefault = Reflect.has(model, key) ? model[key] : undefined;
             for (let i = filterExecutes.length - 1; i >= 0; i--) {
                 // 当前属性值
                 const element = result[key] ?? values[key];

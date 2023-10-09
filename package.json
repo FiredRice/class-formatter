@@ -1,6 +1,6 @@
 {
 	"name": "class-formatter",
-	"version": "5.1.0",
+	"version": "5.1.1",
 	"description": "一套装饰器风格的数据格式化方法。",
 	"author": "东北炒饭",
 	"license": "MIT",
