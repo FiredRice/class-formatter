@@ -1,4 +1,4 @@
-import { Extend, executeTransform, toNumber, toString, TransModel } from '../../src';
+import { Extend, executeTransform, toNumber, toString, TransModel, Remove } from '../../src';
 
 describe('【Extend】装饰器测试', () => {
     describe('装饰器测试', () => {
@@ -100,6 +100,61 @@ describe('【Extend】装饰器测试', () => {
         });
         test(`Function 属性`, () => {
             expect(executeTransform(Test, { value: () => { }, value2: () => { } })).toEqual({ value: 0, value2: '' });
+        });
+    });
+
+    describe('Remove Extend测试', () => {
+        @TransModel
+        class Parent {
+            @toNumber()
+            value!: number;
+        }
+
+        @Extend(Parent)
+        @TransModel
+        class Test {
+            @Remove()
+            value: any;
+
+            @toString()
+            value2!: string;
+        }
+
+        test(`不存在的属性`, () => {
+            expect(executeTransform(Test, {})).toEqual({ value2: '' });
+        });
+        test(`数字类型的属性`, () => {
+            expect(executeTransform(Test, { value: 1, value2: 1 })).toEqual({ value2: '1' });
+        });
+        test(`字符串类型的属性`, () => {
+            expect(executeTransform(Test, { value: '1', value2: '2' })).toEqual({ value2: '2' });
+        });
+        test(`boolean 类型的属性 false`, () => {
+            expect(executeTransform(Test, { value: false, value2: false })).toEqual({ value2: '' });
+        });
+        test(`boolean 类型的属性 true`, () => {
+            expect(executeTransform(Test, { value: true, value2: true })).toEqual({ value2: '' });
+        });
+        test(`数组类型的属性`, () => {
+            expect(executeTransform(Test, { value: [1, 2], value2: [1, 2] })).toEqual({ value2: '' });
+        });
+        test(`对象类型的属性`, () => {
+            expect(executeTransform(Test, { value: { name: '1' }, value2: { name: '1' } })).toEqual({ value2: '' });
+        });
+        test(`undefined 属性`, () => {
+            expect(executeTransform(Test, { value: undefined, value2: undefined })).toEqual({ value2: '' });
+        });
+        test(`null 属性`, () => {
+            expect(executeTransform(Test, { value: null, value2: null })).toEqual({ value2: '' });
+        });
+        test(`正则属性`, () => {
+            expect(executeTransform(Test, { value: /^132$/, value2: /^132$/ })).toEqual({ value2: '' });
+        });
+        test(`Symbol 属性`, () => {
+            expect(executeTransform(Test, { value: Symbol(), value2: Symbol() })).toEqual({ value2: '' });
+        });
+        test(`Function 属性`, () => {
+            expect(executeTransform(Test, { value: () => { }, value2: () => { } })).toEqual({ value2: '' });
         });
     });
 

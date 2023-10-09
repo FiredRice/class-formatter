@@ -1,20 +1,10 @@
-import { toString, executeTransform, TransModel, Mixins, toNumber, Extend } from '../src';
+import { executeTransform, TransModel, Remove, toNumber, toString } from '../src';
 
 @TransModel
-class Parent {
-    @toNumber()
-    age!: any;
+class Test {
+    @Remove({ keys: 1 })
+    age!: number;
 }
 
-@TransModel
-@Extend(Parent)
-class Test extends Parent {
-    @toString()
-    name!: string;
-
-    @toString()
-    age: string = '58';
-}
-
-const res = executeTransform(Test, {});
+const res = executeTransform(Test, { age: 2, name: '张三' });
 console.log(res);

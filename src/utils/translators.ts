@@ -230,8 +230,6 @@ export function subTransform(ClassType: Type, values, context: TransContext, opt
 
     for (let i = commandKeys.length - 1; i >= 0; i--) {
         const key = commandKeys[i];
-        // 当前属性值
-        const element = values[key];
         // 过滤出本次格式化需要执行的指令
         const filterExecutes = getEffectCommands(executePlan[key] || [], modelKey);
         const { length } = filterExecutes;
@@ -239,6 +237,8 @@ export function subTransform(ClassType: Type, values, context: TransContext, opt
             // 模板默认值
             const modalDefault = Object.prototype.hasOwnProperty.call(model, key) ? model[key] : undefined;
             for (let i = filterExecutes.length - 1; i >= 0; i--) {
+                // 当前属性值
+                const element = result[key] ?? values[key];
                 const { type, value } = filterExecutes[i];
                 switch (type) {
                     case 'number':
@@ -266,16 +266,20 @@ export function subTransform(ClassType: Type, values, context: TransContext, opt
                         result[key] = element;
                         break;
                     case 'remove':
-                        Reflect.deleteProperty(result, key);
+                        if (value(element, values, shareValue)) {
+                            Reflect.deleteProperty(result, key);
+                        } else if (!Reflect.has(result, key) && Reflect.has(values, key)) {
+                            result[key] = element;
+                        }
                         break;
                     case 'format':
-                        result[key] = value(result[key] ?? element, values, shareValue);
+                        result[key] = value(element, values, shareValue);
                         break;
                     case 'custom':
                         result[key] = transCustom(values, shareValue, value.callback, value.args);
                         break;
                     case 'rename':
-                        result[value] = Object.prototype.hasOwnProperty.call(result, key) ? result[key] : values[key];
+                        result[value] = Reflect.has(result, key) ? result[key] : values[key];
                         Reflect.deleteProperty(result, key);
                         break;
                     case 'extend_method':

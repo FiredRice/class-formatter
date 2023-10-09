@@ -12,9 +12,9 @@
 - [Interface](#Interface)<br>
 - [自定义属性装饰器](#自定义属性装饰器)<br>
 - [关于执行键](#关于执行键)<br>
+  - [特别注意](#keys-advise)<br>
+  - [多装饰器管理](#keys-manage)<br>
 - [关于循环引用](#关于循环引用)<br>
-  - [多模板循间环引用](#多模板循间环引用)<br>
-  - [被转换对象存在在循环引用](#被转换对象存在在循环引用)<br>
   - [模板自循环](#模板自循环)<br>
 - [关于混入](#关于混入)<br>
 - [注意事项](#注意事项)<br>
@@ -157,14 +157,14 @@ class User {
 |toType|若属性为非对象类型，则将属性转换为对象。<br>若指定了 `Type`，则可以将类型转换为 `Type` 的类型。|(value?: [ObjectConfig](#ObjectConfig) \| Type) => [ClassFieldDecorator](#ClassFieldDecorator)|defaultValue: {}|
 |toArray|若属性为非数组类型，则将属性转换为数组。<br>若指定了 `Type`，则可以将数组内所有数据转换为 `Type` 的类型。|(value?: [ArrayConfig](#ArrayConfig) \| Type) => [ClassFieldDecorator](#ClassFieldDecorator)|defaultValue: []|
 |toKeep|保持源数据引用|keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldDecorator](#ClassFieldDecorator)|--|
-|Remove|移除属性|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
+|Remove|移除属性。若传入回调函数且回调函数返回 `true` ，则删除该属性，否则删除|(value?: [RemoveConfig](#RemoveConfig) \| [RemoveCallback](#RemoveCallback) \| [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
 |Format|对属性进行自定义格式化。<br>**注意：Format 不限制返回值类型，使用时请格外注意**|(callback: [FormatCallback](#FormatCallback), keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldDecorator](#ClassFieldDecorator)|--|
 |Rename|对属性重命名。|(name: string, keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
 
 |方法装饰器|说明|类型|默认值|
 |---|---|---|---|
 |Extend|在结果中继承被装饰的方法或访问器|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassMethodDecorator](#ClassMethodDecorator)|--|
-|Remove|移除方法。**注意：需先使用 `Extend` 继承方法**|(keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
+|Remove|移除方法。**注意：需先使用 `Extend` 继承方法**|(value?: [RemoveConfig](#RemoveConfig) \| [RemoveCallback](#RemoveCallback) \| [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
 |Rename|重命名方法。**注意：需先使用 `Extend` 继承方法**|(name: string, keys?: [ModelKey](#ModelKey) \| [ModelKey](#ModelKey)[]) => [ClassFieldAndMethodDecorator](#ClassFieldAndMethodDecorator)|--|
 
 |类装饰器|说明|类型|默认值|
@@ -284,6 +284,19 @@ type FormatCallback = (item, values) => any;
 |values|源数据<br>**注意：values 源数据的直接引用，请勿在转换过程中对其进行修改**|
 |shareValue|共享数据<br>**注意：shareValue 为共享数据的直接引用，请勿在转换过程中对其进行修改**|
 
+**<div id='RemoveCallback'>RemoveCallback</div>**
+```ts
+type RemoveCallback = (value: any, target: Readonly<any>, shareValue?: any) => boolean;
+```
+
+**<div id='RemoveConfig'>RemoveConfig</div>**
+```ts
+type RemoveConfig = {
+    beforeRemove?: RemoveCallback;
+    keys?: ModelKey | ModelKey[];
+};
+```
+
 **<div id='Type'>Type</div>**
 ```ts
 interface Type<T = any> extends Function {
@@ -345,7 +358,56 @@ class User {
 |args|在生成的装饰器中传入的参数|any[]|
 
 
-**createBatchDecorators：用于对多装饰器进行管理。**
+## 关于执行键
+
+executeTransform 的 options 属性中提供了 key 属性，以下称为 rootKey 。 在所有指令中均提供了 keys 属性的入口，以下称为 propertyKeys 。
+
+- 若 propertyKeys 不存在，则指令会被无条件执行。
+- 若 propertyKeys 存在，则当且仅当 propertyKeys 中 **包含**  rootKey 时该指令才会执行。
+
+```ts
+class User {
+    @toString({ keys: 'submit' })
+    name!: string;
+
+    @toNumber()
+    age!: number;
+}
+
+const user = {
+    name: '张三',
+    age: '18'
+};
+
+const formatUser = executeTransform(User, user, {
+    key: 'submit'
+});
+```
+
+上述示例中：
+- `toNumber` 指令会无条件执行。
+- 若 `executeTransform` 中传入的 `key` 为 'submit'，则 `toString` 指令会被执行，否则将忽略 `name` 属性。
+
+由于执行键的存在，我们可以方便的在同一个模板上定制多套格式化方法。如下：
+
+```ts
+class User {
+    @toString()
+    @toString({ defaultValue: '张三', keys: '1' })
+    @toString({ defaultValue: '李四', keys: '2' })
+    @toString({ defaultValue: '王五', keys: '3' })
+    name!: string;
+
+    @toNumber()
+    age!: number;
+}
+```
+
+**<div id='keys-advise'>注意：当一个属性拥有多个装饰器时，模板的可读性下降，且难以迭代。因此建议优先考虑模板继承策略进行个性化复用。如无必要请尽量避免使用执行键。</div>**
+
+<div id='keys-manage'>class-formatter 提供了 createBatchDecorators 方法用于对多装饰器进行管理。</div>
+
+**createBatchDecorators**
 |属性|说明|类型|
 |---|---|---|
 |...decorators|需要统一管理的装饰器|PropertyDecorator[]|

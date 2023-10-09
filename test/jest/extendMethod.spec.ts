@@ -1,4 +1,4 @@
-import { Extend, executeTransform, TransModel, toNumber } from '../../src';
+import { Extend, executeTransform, TransModel, toNumber, Remove } from '../../src';
 
 describe('【ExtendMethod】装饰器测试', () => {
     describe('装饰器测试', () => {
@@ -175,6 +175,60 @@ describe('【ExtendMethod】装饰器测试', () => {
             const res = executeTransform(Test, { value: () => { } });
             res.value2 = 5;
             expect(res.value).toBe(6);
+        });
+    });
+
+    describe('Remove Method测试', () => {
+        @TransModel
+        class Test {
+            @toNumber()
+            value!: number;
+
+            @Extend()
+            @Remove()
+            public getValue() {
+                return this.value;
+            }
+        }
+
+        test(`不存在的属性`, () => {
+            expect(executeTransform(Test, {}).getValue).toBe(undefined);
+        });
+        test(`数字类型的属性`, () => {
+            expect(executeTransform(Test, { value: 1 }).getValue).toBe(undefined);
+        });
+        test(`字符串类型的属性`, () => {
+            expect(executeTransform(Test, { value: '1' }).getValue).toBe(undefined);
+        });
+        test(`boolean 类型的属性 false`, () => {
+            expect(executeTransform(Test, { value: false }).getValue).toBe(undefined);
+        });
+        test(`boolean 类型的属性 true`, () => {
+            expect(executeTransform(Test, { value: true }).getValue).toBe(undefined);
+        });
+        test(`数组类型的属性`, () => {
+            expect(executeTransform(Test, { value: [1, 2] }).getValue).toBe(undefined);
+        });
+        test(`对象类型的属性`, () => {
+            expect(executeTransform(Test, { value: { name: '1' } }).getValue).toBe(undefined);
+        });
+        test(`undefined 属性`, () => {
+            expect(executeTransform(Test, { value: undefined }).getValue).toBe(undefined);
+        });
+        test(`null 属性`, () => {
+            expect(executeTransform(Test, { value: null }).getValue).toBe(undefined);
+        });
+        test(`正则属性`, () => {
+            expect(executeTransform(Test, { value: /^132$/ }).getValue).toBe(undefined);
+        });
+        test(`Symbol 属性`, () => {
+            expect(executeTransform(Test, { value: Symbol() }).getValue).toBe(undefined);
+        });
+        test(`Function 属性`, () => {
+            expect(executeTransform(Test, { value: () => { } }).getValue).toBe(undefined);
+        });
+        test(`合并源数据`, () => {
+            expect(executeTransform(Test, { value: 5 }, { mergeSource: true }).getValue).toBe(undefined);
         });
     });
 });
