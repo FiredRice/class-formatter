@@ -1,6 +1,6 @@
 {
 	"name": "class-formatter",
-	"version": "3.2.0",
+	"version": "3.3.0",
 	"description": "一套装饰器风格的数据格式化方法。",
 	"author": "东北炒饭",
 	"license": "MIT",
@@ -55,7 +55,5 @@
 		"lib",
 		"LICENSE"
 	],
-	"engines": {
-		"typescript": "<5.x"
-	}
+	"engines": {}
 }

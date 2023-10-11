@@ -203,8 +203,6 @@ function getEffectCommands(commands: Commands, modelKey?: ModelKey) {
                 result.push(element);
             }
         }
-        // 指令逆序执行，因此排序时应降序
-        (result.length > 1) && result.sort((a, b) => b.priority - a.priority);
     }
     return result;
 }

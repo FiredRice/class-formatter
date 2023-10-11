@@ -1,4 +1,4 @@
-import { classCommandMap, HIGH_PRORITY } from '../../config';
+import { classCommandMap } from '../../config';
 import { ModelKey, Type } from '../../types';
 import { cloneCommands, commandsRegist, useModelKeys } from '../../utils';
 
@@ -11,7 +11,6 @@ export function ExtendMethod(keys?: ModelKey | ModelKey[]): MethodDecorator {
             type: 'extend_method',
             value: descriptor,
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

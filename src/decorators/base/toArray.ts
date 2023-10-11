@@ -1,4 +1,3 @@
-import { HIGH_PRORITY } from '../../config';
 import { ArrayConfig, Type } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -28,7 +27,6 @@ export function toArray<T = any>(value?: ArrayConfig<T> | Type<T>): PropertyDeco
                 map
             },
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

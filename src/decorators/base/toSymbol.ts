@@ -1,5 +1,4 @@
 import isSymbol from 'lodash/isSymbol';
-import { HIGH_PRORITY } from '../../config';
 import { SymbolConfig } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -21,7 +20,6 @@ export function toSymbol(value: SymbolConfig | symbol = Symbol()): PropertyDecor
             type: 'symbol',
             value: defaultValue,
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

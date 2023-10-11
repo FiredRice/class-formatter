@@ -1,4 +1,3 @@
-import { HIGH_PRORITY } from '../../config';
 import { NumberConfig } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -25,7 +24,6 @@ export function toNumber(value: NumberConfig | number = 0): PropertyDecorator {
                 autoTrans
             },
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

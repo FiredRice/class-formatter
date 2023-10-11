@@ -1,4 +1,3 @@
-import { LOWER_MIDDLE_PRORITY } from '../../config';
 import { Callback, ModelKey } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -18,7 +17,6 @@ export function createFormatDecorator<T = any>(callback: Callback<T>, keys?: Mod
                     callback
                 },
                 modelKeys: useModelKeys(keys),
-                priority: LOWER_MIDDLE_PRORITY
             });
         };
     };

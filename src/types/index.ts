@@ -115,7 +115,6 @@ export type CommandType =
 export interface Command {
     type: CommandType;
     value: any;
-    priority: number;
     modelKeys: ModelKey[];
 }
 

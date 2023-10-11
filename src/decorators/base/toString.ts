@@ -1,4 +1,3 @@
-import { HIGH_PRORITY } from '../../config';
 import { StringConfig } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -25,7 +24,6 @@ export function toString(value: StringConfig | string = ''): PropertyDecorator {
                 autoTrans
             },
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

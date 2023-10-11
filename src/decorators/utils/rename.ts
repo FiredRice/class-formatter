@@ -1,4 +1,3 @@
-import { LOW_PRORITY } from '../../config';
 import { ModelKey } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -13,7 +12,6 @@ export function Rename(name: string, keys?: ModelKey | ModelKey[]): PropertyDeco
             type: 'rename',
             value: name,
             modelKeys: useModelKeys(keys),
-            priority: LOW_PRORITY
         });
     };
 }

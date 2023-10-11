@@ -1,4 +1,3 @@
-import { UPPER_MIDDLE_PRORITY } from '../../config';
 import { ModelKey } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -12,7 +11,6 @@ export function toKeep(keys?: ModelKey | ModelKey[]): PropertyDecorator {
             type: 'keep',
             value: {},
             modelKeys: useModelKeys(keys),
-            priority: UPPER_MIDDLE_PRORITY
         });
     };
 }

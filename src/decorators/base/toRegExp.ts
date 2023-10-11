@@ -1,6 +1,5 @@
 import isRegExp from 'lodash/isRegExp';
 import isString from 'lodash/isString';
-import { HIGH_PRORITY } from '../../config';
 import { RegConfig } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -22,7 +21,6 @@ export function toRegExp(value: RegConfig | RegExp | string = ''): PropertyDecor
             type: 'reg_exp',
             value: defaultValue,
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

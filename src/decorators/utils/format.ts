@@ -1,4 +1,3 @@
-import { MEDIUM_PRORITY } from '../../config';
 import { ModelKey } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -13,7 +12,6 @@ export function Format(callback: (value: any, target: Readonly<any>, shareValue:
             type: 'format',
             value: callback,
             modelKeys: useModelKeys(keys),
-            priority: MEDIUM_PRORITY
         });
     };
 }

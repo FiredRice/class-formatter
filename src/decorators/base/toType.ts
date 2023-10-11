@@ -1,4 +1,3 @@
-import { HIGH_PRORITY } from '../../config';
 import { ObjectConfig, Type } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -25,7 +24,6 @@ export function toType<T = any>(value?: ObjectConfig<T> | Type<T>): PropertyDeco
                 ClassType
             },
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

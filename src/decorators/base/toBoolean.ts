@@ -1,4 +1,3 @@
-import { HIGH_PRORITY } from '../../config';
 import { BooleanConfig } from '../../types';
 import { commandsRegist, useModelKeys } from '../../utils';
 
@@ -20,7 +19,6 @@ export function toBoolean(value: BooleanConfig | boolean = false): PropertyDecor
             type: 'boolean',
             value: defaultValue,
             modelKeys: useModelKeys(keys),
-            priority: HIGH_PRORITY
         });
     };
 }

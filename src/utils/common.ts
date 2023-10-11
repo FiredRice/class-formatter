@@ -14,7 +14,7 @@ export function useModelKeys(modelKeys: ModelKey | ModelKey[] = []) {
  */
 export function mixins<T extends Function>(child: T, parents: Type[]) {
     const commandList: CommandMap[] = [];
-    for (let i = parents.length - 1; i >= 0; i--) {
+    for (let i = 0; i < parents.length; i++) {
         const parent = parents[i];
         if (classCommandMap.has(parent.prototype)) {
             commandList.push(cloneCommands(classCommandMap.get(parent.prototype)!));
@@ -27,7 +27,14 @@ export function mixins<T extends Function>(child: T, parents: Type[]) {
             }
         }
     }
-    classCommandMap.set(child.prototype, Object.assign({}, ...commandList, classCommandMap.get(child.prototype) || {}));
+    classCommandMap.set(
+        child.prototype,
+        Object.assign(
+            {},
+            ...commandList,
+            classCommandMap.get(child.prototype) || {}
+        )
+    );
 }
 
 /**
