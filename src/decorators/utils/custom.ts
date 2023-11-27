@@ -30,7 +30,7 @@ export function createBatchDecorators(...decorators: PropertyDecorator[]) {
     return function (): PropertyDecorator {
         return function (target, propertyKey) {
             const { length } = decorators;
-            for (let i = 0; i < length; i++) {
+            for (let i = length - 1; i >= 0; i--) {
                 decorators[i](target, propertyKey);
             }
         };
