@@ -4,12 +4,8 @@
 name: Publish Package to Npmjs
 
 on:
-  push:
-    # branches: [ main ]
-    # paths:
-    #   - 'src/'
-    tags:
-      - '**'
+  release:
+    types: [published]
 
 jobs:
   build:
